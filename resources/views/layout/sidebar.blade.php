@@ -107,7 +107,7 @@
                  </li>
 
                  <li class="nav-item">
-                     <a data-bs-toggle="collapse" href="#base">
+                     <a href="{{ route('index.Instansi') }}">
                          <i class="fas fa-building"></i>
                          <p>Instansi</p>
                      </a>

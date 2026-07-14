@@ -40,6 +40,8 @@ Route::group(['middleware' => ['auth', 'role:1']], function () {
     Route::get('/getekpedisisuratkeluar', [App\Http\Controllers\DashboardController::class, 'getEkpedisiSuratKeluar'])->name('get.EkpedisiSuratKeluar');
     Route::post('/downloadekpedisisuratkeluar', [App\Http\Controllers\DashboardController::class, 'downloadEkpedisiSuratKeluar'])->name('download.EkpedisiSuratKeluar');
 
+    // reload dropdown
+    Route::get('/getInstansiDropdown', [App\Http\Controllers\DashboardController::class,'getInstansiDropdown'])->name('get.InstansiDropdown');
 
     //manajemen->user
     Route::get('/indexUser', [App\Http\Controllers\ManajemenController::class, 'indexUser'])->name('index.User');
@@ -67,6 +69,4 @@ Route::group(['middleware' => ['auth', 'role:1']], function () {
     Route::get('/editInstansi/{id}', [App\Http\Controllers\ManajemenController::class, 'editInstansi'])->name('edit.Instansi');
     Route::put('/updateInstansi/{id}', [App\Http\Controllers\ManajemenController::class, 'updateInstansi'])->name('update.Instansi');
     Route::delete('/deleteInstansi/{id}', [App\Http\Controllers\ManajemenController::class, 'deleteInstansi'])->name('delete.Instansi');
-
-
 });

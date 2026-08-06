@@ -71,7 +71,7 @@
                                  </a>
                              </li>
                              <li>
-                                 <a href="components/gridsystem.html">
+                                 <a href="{{ route('index.ArsipDigital') }}">
                                      <span class="sub-item">Arsip Surat Digital</span>
                                  </a>
                              </li>

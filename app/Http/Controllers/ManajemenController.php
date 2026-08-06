@@ -383,24 +383,22 @@ class ManajemenController extends Controller
         $dataInstansi = Instansi::query();
 
         return DataTables::eloquent($dataInstansi)
-
         ->addIndexColumn()
-
         ->editColumn('nama_instansi', function ($row) {
-            $alamat = $row->alamat
-        ? e($row->alamat)
-        : '<span class="text-muted">Alamat belum diisi</span>';
+                    $alamat = $row->alamat
+                ? e($row->alamat)
+                : '<span class="text-muted">Alamat belum diisi</span>';
 
-            return '
-        <div class="text-start">
-            <strong>' . e($row->nama_instansi) . '</strong><br>
+                    return '
+                <div class="text-start">
+                    <strong>' . e($row->nama_instansi) . '</strong><br>
 
-            <small class="text-muted">
-                <i class="fas fa-map-marker-alt text-danger"></i>
-                ' . $alamat . '
-            </small>
-        </div>
-    ';
+                    <small class="text-muted">
+                        <i class="fas fa-map-marker-alt text-danger"></i>
+                        ' . $alamat . '
+                    </small>
+                </div>
+            ';
         })
         ->editColumn('kode_instansi', function ($row) {
             return $row->kode_instansi ?: '-';

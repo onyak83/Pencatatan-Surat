@@ -1,3 +1,23 @@
+<style>
+    .badge-masuk {
+        background: #2563EB;
+        color: #fff;
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .badge-keluar {
+        background: #22C55E;
+        color: #fff;
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+</style>
+
 <div class="row">
     <div class="col-md-12">
         <div class="card">

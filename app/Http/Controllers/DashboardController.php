@@ -61,6 +61,17 @@ class DashboardController extends Controller
             $dataSurat = Surat::with(['sifatSurat','instansi'])->orderBy('id', 'desc');
 
             return datatables()->of($dataSurat)
+             ->editColumn('jenis_surat', function ($row) {
+                if ($row->jenis_surat == 'masuk') {
+                    return '<span class="badge badge-masuk">
+                                <i class="fas fa-download me-1"></i> Masuk
+                            </span>';
+                }
+                return '<span class="badge badge-keluar">
+                            <i class="fas fa-upload me-1"></i> Keluar
+                        </span>';
+            })
+
             ->editColumn('tgl_diterima', function ($row) {
                 return $row->tgl_diterima
                     ? Carbon::parse($row->tgl_diterima)
@@ -114,7 +125,7 @@ class DashboardController extends Controller
             ->addColumn('aksi', function ($row) {
                 return view('dashboard.surat.aksi', ['surat' => $row]);
             })
-            ->rawColumns(['no_surat', 'lihatfile', 'instansi', 'aksi'])
+            ->rawColumns(['jenis_surat', 'no_surat', 'lihatfile', 'instansi', 'aksi'])
             ->make(true);
         }
     }
@@ -493,4 +504,58 @@ class DashboardController extends Controller
         ->rawColumns(['no_surat','instansi','perihal', 'lihatsurat'])
         ->make(true);
     }
+
+    public function indexArsipDigital()
+    {
+        $instansi = Instansi::orderBy('nama_instansi')
+            ->get();
+
+        return view('dashboard.laporan.arsipsuratdigital.index', compact('instansi'));
+    }
+
+    public function getArsipDigital(Request $request)
+    {
+        $arsip = Surat::with(['instansi', 'sifatSurat'])
+            ->where('jenis_surat', $request->jenis_surat)
+
+            ->when($request->nomor_surat, function ($q) use ($request) {
+                $q->where('no_surat', 'like', '%' . $request->nomor_surat . '%');
+            })
+
+            ->when($request->tgl_surat, function ($q) use ($request) {
+                $q->whereDate('tgl_surat', $request->tgl_surat);
+            })
+
+            ->when($request->perihal, function ($q) use ($request) {
+                $q->where('perihal', 'like', '%' . $request->perihal . '%');
+            })
+
+            ->when($request->instansi_id, function ($q) use ($request) {
+                $q->where('instansi_id', $request->instansi_id);
+            })
+
+            ->latest()
+            ->get()
+
+            // LETAKNYA DI SINI
+            ->map(function ($item) {
+
+                $item->tgl_surat = Carbon::parse($item->tgl_surat)
+                    ->translatedFormat('d F Y');
+
+                return $item;
+
+            });
+
+        return response()->json($arsip);
+    }
+
+    public function detailArsipDigital(string $id)
+    {
+        $surat = Surat::with(['instansi','sifatSurat','user'])
+            ->findOrFail($id);
+
+        return response()->json($surat);
+    }
+
 }

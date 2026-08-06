@@ -43,6 +43,13 @@ Route::group(['middleware' => ['auth', 'role:1']], function () {
     // reload dropdown
     Route::get('/getInstansiDropdown', [App\Http\Controllers\DashboardController::class,'getInstansiDropdown'])->name('get.InstansiDropdown');
 
+    // view arsip digital
+    Route::get('/arsipdigital', [App\Http\Controllers\DashboardController::class, 'indexArsipDigital'])->name('index.ArsipDigital');
+    Route::get('/getarsipdigital', [App\Http\Controllers\DashboardController::class, 'getArsipDigital'])->name('get.ArsipDigital');
+    Route::get('/arsip-digital/detail/{id}', [App\Http\Controllers\DashboardController::class, 'detailArsipDigital'])->name('detail.ArsipDigital');
+
+
+
     //manajemen->user
     Route::get('/indexUser', [App\Http\Controllers\ManajemenController::class, 'indexUser'])->name('index.User');
     Route::get('/getUser', [App\Http\Controllers\ManajemenController::class, 'getUser'])->name('get.User');
@@ -69,4 +76,6 @@ Route::group(['middleware' => ['auth', 'role:1']], function () {
     Route::get('/editInstansi/{id}', [App\Http\Controllers\ManajemenController::class, 'editInstansi'])->name('edit.Instansi');
     Route::put('/updateInstansi/{id}', [App\Http\Controllers\ManajemenController::class, 'updateInstansi'])->name('update.Instansi');
     Route::delete('/deleteInstansi/{id}', [App\Http\Controllers\ManajemenController::class, 'deleteInstansi'])->name('delete.Instansi');
+
+
 });

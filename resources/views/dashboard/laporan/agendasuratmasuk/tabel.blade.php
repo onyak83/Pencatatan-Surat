@@ -61,8 +61,10 @@
                                         </button>
 
                                         <button type="button" id="btnDownload" class="btn btn-success"
-                                            title="Download ">
+                                            title="Download">
+
                                             <i class="fa fa-download me-1"></i>
+
                                         </button>
 
                                         <button type="button" id="btnReset" class="btn btn-secondary" title="Reset">
@@ -251,14 +253,102 @@
     </script>
 
     <script>
+        // =====================================================
+        // PREVIEW SURAT
+        // =====================================================
+
         $(document).on('click', '.btn-preview-surat', function() {
+
             let file = $(this).data('file');
+
             $('#previewSurat').attr('src', file);
 
         });
 
+
+        // =====================================================
+        // BERSIHKAN IFRAME SAAT MODAL DITUTUP
+        // =====================================================
+
         $('#modalPreviewSurat').on('hidden.bs.modal', function() {
+
             $('#previewSurat').attr('src', '');
+
+        });
+    </script>
+
+    //download surat agenda
+    <script>
+        $('#btnDownload').click(function() {
+
+            let form = $('<form>', {
+                method: 'POST',
+                action: "{{ route('download.AgendaSuratMasuk') }}"
+            });
+
+            // CSRF TOKEN
+            form.append(
+                $('<input>', {
+                    type: 'hidden',
+                    name: '_token',
+                    value: "{{ csrf_token() }}"
+                })
+            );
+
+            // TANGGAL AWAL
+            form.append(
+                $('<input>', {
+                    type: 'hidden',
+                    name: 'tgl_awal',
+                    value: $('#tgl_awal').val()
+                })
+            );
+
+            // TANGGAL AKHIR
+            form.append(
+                $('<input>', {
+                    type: 'hidden',
+                    name: 'tgl_akhir',
+                    value: $('#tgl_akhir').val()
+                })
+            );
+
+            // TANGGAL SURAT
+            form.append(
+                $('<input>', {
+                    type: 'hidden',
+                    name: 'tgl_surat',
+                    value: $('#tgl_surat').val()
+                })
+            );
+
+            // SIFAT SURAT
+            form.append(
+                $('<input>', {
+                    type: 'hidden',
+                    name: 'sifat_surat',
+                    value: $('#sifat_surat').val()
+                })
+            );
+
+            // INSTANSI
+            form.append(
+                $('<input>', {
+                    type: 'hidden',
+                    name: 'instansi_id',
+                    value: $('#instansi_id').val()
+                })
+            );
+
+            // MASUKKAN FORM KE BODY
+            $('body').append(form);
+
+            // SUBMIT
+            form.submit();
+
+            // HAPUS FORM SETELAH SUBMIT
+            form.remove();
+
         });
     </script>
 @endpush

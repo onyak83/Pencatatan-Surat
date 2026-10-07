@@ -4,9 +4,9 @@
     <div class="container">
         <div class="page-inner">
 
-            @include('dashboard.surat.header')
+            @include('dashboard.manajemen.pegawai.header')
 
-            @include('dashboard.surat.tabel')
+            @include('dashboard.manajemen.pegawai.tabel')
 
         </div>
     </div>

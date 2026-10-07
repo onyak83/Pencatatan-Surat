@@ -84,7 +84,6 @@
         }
     </style>
 
-
     <div class="container">
         <div class="page-inner">
             <!-- Header -->
@@ -119,15 +118,15 @@
                                     <i class="fas fa-envelope"></i>
                                 </div>
                                 <div class="ms-3 flex-grow-1">
-                                    <div class="text-muted small">
-                                        Surat Masuk
-                                    </div>
+                                    <div class="text-muted small">Surat Masuk</div>
                                     <h2 class="mb-1 fw-bold">
-                                        350
+                                        {{ number_format($totalSuratMasuk, 0, '.', ',') }}
                                     </h2>
-                                    <small class="text-success">
-                                        <i class="fas fa-arrow-up me-1"></i>
-                                        12% dari bulan lalu
+                                    <small class="{{ $persentaseSuratMasuk >= 0 ? 'text-success' : 'text-danger' }}">
+                                        <i
+                                            class="fas {{ $persentaseSuratMasuk >= 0 ? 'fa-arrow-up' : 'fa-arrow-down' }} me-1"></i>
+                                        {{ number_format(abs($persentaseSuratMasuk), 1) }}%
+                                        dari bulan lalu
                                     </small>
                                 </div>
                             </div>
@@ -144,15 +143,15 @@
                                     <i class="fas fa-paper-plane"></i>
                                 </div>
                                 <div class="ms-3 flex-grow-1">
-                                    <div class="text-muted small">
-                                        Surat Keluar
-                                    </div>
+                                    <div class="text-muted small">Surat Keluar</div>
                                     <h2 class="mb-1 fw-bold">
-                                        285
+                                        {{ number_format($totalSuratKeluar, 0, '.', ',') }}
                                     </h2>
-                                    <small class="text-success">
-                                        <i class="fas fa-arrow-up me-1"></i>
-                                        8% dari bulan lalu
+                                    <small class="{{ $persentaseSuratKeluar >= 0 ? 'text-success' : 'text-danger' }}">
+                                        <i
+                                            class="fas {{ $persentaseSuratKeluar >= 0 ? 'fa-arrow-up' : 'fa-arrow-down' }} me-1"></i>
+                                        {{ number_format(abs($persentaseSuratKeluar), 1) }}%
+                                        dari bulan lalu
                                     </small>
                                 </div>
                             </div>
@@ -161,6 +160,7 @@
                 </div>
 
                 <!-- Hari Ini -->
+                <!-- Surat Masuk Hari Ini -->
                 <div class="col-xl-3 col-md-6 mb-4">
                     <div class="card dashboard-card border-0">
                         <div class="card-body">
@@ -169,23 +169,22 @@
                                     <i class="fas fa-calendar"></i>
                                 </div>
                                 <div class="ms-3 flex-grow-1">
-                                    <div class="text-muted small">
-                                        Surat Masuk Hari Ini
-                                    </div>
+                                    <div class="text-muted small">Surat Masuk Hari Ini</div>
                                     <h2 class="mb-1 fw-bold">
-                                        12
+                                        {{ number_format($suratMasukHariIni, 0, ',', '.') }}
                                     </h2>
-                                    <small class="text-primary">
+                                    <a href="{{ route('index.SuratMasuk') }}"
+                                        class="text-primary text-decoration-none small">
                                         Lihat Detail
                                         <i class="fas fa-angle-right ms-1"></i>
-                                    </small>
+                                    </a>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Keluar Hari Ini -->
+                <!-- Surat Keluar Hari Ini -->
                 <div class="col-xl-3 col-md-6 mb-4">
                     <div class="card dashboard-card border-0">
                         <div class="card-body">
@@ -194,16 +193,15 @@
                                     <i class="fas fa-calendar-check"></i>
                                 </div>
                                 <div class="ms-3 flex-grow-1">
-                                    <div class="text-muted small">
-                                        Surat Keluar Hari Ini
-                                    </div>
+                                    <div class="text-muted small">Surat Keluar Hari Ini</div>
                                     <h2 class="mb-1 fw-bold">
-                                        9
+                                        {{ number_format($suratKeluarHariIni, 0, ',', '.') }}
                                     </h2>
-                                    <small class="text-primary">
+                                    <a href="{{ route('index.SuratKeluar') }}"
+                                        class="text-primary text-decoration-none small">
                                         Lihat Detail
                                         <i class="fas fa-angle-right ms-1"></i>
-                                    </small>
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -211,272 +209,324 @@
                 </div>
             </div>
 
-            <div class="row mt-4">
-                <!-- Grafik Surat -->
-                <div class="col-lg-4">
-                    <div class="card dashboard-card border-0">
-                        <div class="card-header bg-white border-0">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <h5 class="mb-0 fw-bold">
-                                    Grafik Surat Masuk & Surat Keluar
-                                </h5>
-                                <span class="badge bg-primary">
-                                    Tahun 2026
-                                </span>
+            @if (in_array(auth()->user()->role_id, [1, 2]))
+                <div class="row mt-4">
+                    <!-- Grafik Surat -->
+                    <div class="col-lg-4">
+                        <div class="card dashboard-card border-0">
+                            <div class="card-header bg-white border-0">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h5 class="mb-0 fw-bold">Grafik Surat Masuk & Surat Keluar</h5>
+                                    <span class="badge bg-primary">Tahun 2026</span>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div id="chartSurat"></div>
                             </div>
                         </div>
-                        <div class="card-body">
-                            <div id="chartSurat"></div>
+                    </div>
+
+                    <!-- Donut -->
+                    <div class="col-lg-3">
+                        <div class="card dashboard-card border-0">
+                            <div class="card-header bg-white border-0">
+                                <h5 class="fw-bold">Komposisi Surat</h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="chartDonut"></div>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Donut -->
-                <div class="col-lg-3">
-                    <div class="card dashboard-card border-0">
-                        <div class="card-header bg-white border-0">
-                            <h5 class="fw-bold">
-                                Komposisi Surat
-                            </h5>
-                        </div>
-                        <div class="card-body">
-                            <div id="chartDonut"></div>
+                    <div class="col-lg-5">
+                        <div class="card dashboard-card border-0">
+                            <div class="card-header bg-white border-0">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h5 class="fw-bold mb-0" id="judulInstansi">Statistik Surat Masuk per Instansi</h5>
+                                    <div class="btn-group btn-group-sm">
+                                        <button type="button" class="btn btn-primary" id="btnMasuk">
+                                            <i class="fas fa-download me-1"></i>Masuk
+                                        </button>
+                                        <button type="button" class="btn btn-outline-success" id="btnKeluar">
+                                            <i class="fas fa-upload me-1"></i>Keluar
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div id="chartInstansi"></div>
+                            </div>
                         </div>
                     </div>
+
                 </div>
 
-                <div class="col-lg-5">
-                    <div class="card dashboard-card border-0">
-                        <div class="card-header bg-white border-0">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <h5 class="fw-bold mb-0" id="judulInstansi">
-                                    Statistik Surat Masuk per Instansi
-                                </h5>
-                                <div class="btn-group btn-group-sm">
-                                    <button type="button" class="btn btn-primary" id="btnMasuk">
-                                        <i class="fas fa-download me-1"></i>
-                                        Masuk
-                                    </button>
-                                    <button type="button" class="btn btn-outline-success" id="btnKeluar">
-                                        <i class="fas fa-upload me-1"></i>
-                                        Keluar
-                                    </button>
+                <div class="row mt-4">
+                    <!-- Surat Masuk -->
+                    <div class="col-lg-5">
+                        <div class="card dashboard-card border-0">
+                            <div class="card-header bg-white">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h5 class="fw-bold mb-0">Surat Masuk Terbaru</h5>
+                                    <a href="{{ route('index.SuratMasuk') }}" class="btn btn-sm btn-primary">Lihat
+                                        Semua</a>
+                                </div>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table table-hover align-middle mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th>No. Agenda</th>
+                                                <th>Instansi Pengirim</th>
+                                                <th>No. & Tgl. Surat & Tgl. Diterima</th>
+                                                <th>Sifat</th>
+                                                <th>Perihal</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+
+                                            @forelse ($suratMasukTerbaru as $surat)
+                                                <tr>
+                                                    <td>
+                                                        {{ $surat->no_agenda ?? '-' }}
+                                                    </td>
+                                                    <td>
+                                                        {{ $surat->instansi->nama_instansi ?? '-' }}
+                                                    </td>
+
+                                                    <td>
+                                                        <div>
+                                                            <small class="text-muted">No. Surat:</small>
+                                                            {{ $surat->no_surat }}
+                                                        </div>
+                                                        <div>
+                                                            <small class="text-muted">Tgl. Surat:</small>
+                                                            {{ \Carbon\Carbon::parse($surat->tgl_surat)->translatedFormat('d M Y') }}
+                                                        </div>
+
+                                                        <div>
+                                                            <small class="text-muted">Tgl. Diterima:</small>
+                                                            {{ \Carbon\Carbon::parse($surat->tgl_diterima)->translatedFormat('d M Y') }}
+                                                        </div>
+                                                    </td>
+
+                                                    <td>
+
+                                                        @php
+                                                            $warnaSifat = [
+                                                                'Biasa' => 'success',
+                                                                'Penting' => 'warning',
+                                                                'Rahasia' => 'danger',
+                                                                'Segera' => 'info',
+                                                            ];
+
+                                                            $namaSifat = $surat->sifatSurat->nama_sifat ?? '-';
+
+                                                            $warna = $warnaSifat[$namaSifat] ?? 'secondary';
+                                                        @endphp
+
+                                                        <span
+                                                            class="badge bg-{{ $warna }}
+                    {{ $warna == 'warning' ? 'text-dark' : '' }}">
+
+                                                            {{ $namaSifat }}
+
+                                                        </span>
+
+                                                    </td>
+                                                    <td>
+                                                        {{ $surat->perihal }}
+                                                    </td>
+
+                                                </tr>
+
+                                            @empty
+
+                                                <tr>
+                                                    <td colspan="4" class="text-center text-muted py-4">
+                                                        Belum ada surat masuk.
+                                                    </td>
+                                                </tr>
+                                            @endforelse
+
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
-                        <div class="card-body">
-                            <div id="chartInstansi"></div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-            <div class="row mt-4">
-                <!-- Surat Masuk -->
-                <div class="col-lg-6">
-
-                    <div class="card dashboard-card border-0">
-
-                        <div class="card-header bg-white">
-
-                            <div class="d-flex justify-content-between">
-
-                                <h5 class="fw-bold">
-                                    Surat Masuk Terbaru
-                                </h5>
-
-                                <button class="btn btn-sm btn-primary">
-                                    Lihat Semua
-                                </button>
-
-                            </div>
-
-                        </div>
-
-                        <div class="card-body p-0">
-
-                            <div class="table-responsive">
-
-                                <table class="table table-hover align-middle mb-0">
-
-                                    <thead>
-
-                                        <tr>
-
-                                            <th>No Surat</th>
-                                            <th>Instansi</th>
-                                            <th>Tanggal</th>
-                                            <th>Sifat</th>
-
-                                        </tr>
-
-                                    </thead>
-
-                                    <tbody>
-
-                                        <tr>
-
-                                            <td>001/BKD/VII/2026</td>
-
-                                            <td>BKPSDM</td>
-
-                                            <td>30 Jul 2026</td>
-
-                                            <td>
-
-                                                <span class="badge bg-success">
-
-                                                    Biasa
-
-                                                </span>
-
-                                            </td>
-
-                                        </tr>
-
-                                        <tr>
-
-                                            <td>002/BKD/VII/2026</td>
-
-                                            <td>Dinkes</td>
-
-                                            <td>29 Jul 2026</td>
-
-                                            <td>
-
-                                                <span class="badge bg-warning text-dark">
-
-                                                    Penting
-
-                                                </span>
-
-                                            </td>
-
-                                        </tr>
-
-                                        <tr>
-
-                                            <td>003/BKD/VII/2026</td>
-
-                                            <td>BPKAD</td>
-
-                                            <td>29 Jul 2026</td>
-
-                                            <td>
-
-                                                <span class="badge bg-danger">
-
-                                                    Rahasia
-
-                                                </span>
-
-                                            </td>
-
-                                        </tr>
-
-                                        <tr>
-
-                                            <td>004/BKD/VII/2026</td>
-
-                                            <td>Disdik</td>
-
-                                            <td>28 Jul 2026</td>
-
-                                            <td>
-
-                                                <span class="badge bg-info">
-
-                                                    Segera
-
-                                                </span>
-
-                                            </td>
-
-                                        </tr>
-
-                                    </tbody>
-
-                                </table>
-
-                            </div>
-
-                        </div>
-
                     </div>
 
-                </div>
-                <div class="col-lg-6">
-                    <div class="card dashboard-card border-0">
-                        <div class="card-header bg-white">
-                            <div class="d-flex justify-content-between">
-                                <h5 class="fw-bold">
-                                    Surat Keluar Terbaru
-                                </h5>
-                                <button class="btn btn-sm btn-success">
-                                    Lihat Semua
-                                </button>
+                    <div class="col-lg-7">
+                        <div class="card dashboard-card border-0">
+                            <div class="card-header bg-white">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h5 class="fw-bold mb-0">Surat Keluar Terbaru</h5>
+                                    <a href="{{ route('index.SuratKeluar') }}" class="btn btn-sm btn-success">Lihat
+                                        Semua</a>
+
+                                </div>
                             </div>
-                        </div>
-                        <div class="card-body p-0">
-                            <div class="table-responsive">
-                                <table class="table table-hover align-middle mb-0">
-                                    <thead>
-                                        <tr>
-                                            <th>No Surat</th>
-                                            <th>Tujuan</th>
-                                            <th>Tanggal</th>
-                                            <th>Sifat</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>100/BKD/VII/2026</td>
-                                            <td>BKN</td>
-                                            <td>30 Jul 2026</td>
-                                            <td>
-                                                <span class="badge bg-success">
-                                                    Biasa
-                                                </span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>101/BKD/VII/2026</td>
-                                            <td>Bupati OKI</td>
-                                            <td>29 Jul 2026</td>
-                                            <td>
-                                                <span class="badge bg-warning text-dark">
-                                                    Penting
-                                                </span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>102/BKD/VII/2026</td>
-                                            <td>Inspektorat</td>
-                                            <td>28 Jul 2026</td>
-                                            <td>
-                                                <span class="badge bg-danger">
-                                                    Rahasia
-                                                </span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>103/BKD/VII/2026</td>
-                                            <td>Disdukcapil</td>
-                                            <td>27 Jul 2026</td>
-                                            <td>
-                                                <span class="badge bg-info">
-                                                    Segera
-                                                </span>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table table-hover align-middle mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th>No. Agenda</th>
+                                                <th>No. & Tgl. Surat & Sifat</th>
+                                                <th>Jenis Surat Keluar</th>
+                                                <th>Detail ST & SPT</th>
+                                                <th>Tujuan</th>
+                                                <th>Perihal</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @forelse ($suratKeluarTerbaru as $surat)
+                                                <tr>
+                                                    <td>
+                                                        {{ $surat->no_agenda }}
+                                                    </td>
+                                                    <td>
+                                                        <div>
+                                                            <small class="text-muted">No. Surat:</small>
+                                                            {{ $surat->no_surat }}
+                                                        </div>
+                                                        <div>
+                                                            <small class="text-muted">Tgl. Surat:</small>
+                                                            {{ \Carbon\Carbon::parse($surat->tgl_surat)->translatedFormat('d M Y') }}
+                                                        </div>
+                                                        @php
+                                                            $warnaSifat = [
+                                                                'Biasa' => 'success',
+                                                                'Penting' => 'warning',
+                                                                'Rahasia' => 'danger',
+                                                                'Segera' => 'info',
+                                                            ];
+                                                            $namaSifat = $surat->sifatSurat->nama_sifat ?? '-';
+                                                            $warna = $warnaSifat[$namaSifat] ?? 'secondary';
+                                                        @endphp
+
+                                                        <span
+                                                            class="badge bg-{{ $warna }}
+                                                     {{ $warna == 'warning' ? 'text-dark' : '' }}">
+                                                            {{ $namaSifat }}
+                                                        </span>
+                                                    </td>
+
+                                                    <td>
+                                                        @php
+                                                            $warnaJenis = [
+                                                                'Surat Biasa' => 'success',
+                                                                'Surat Tugas' => 'primary',
+                                                                'Surat Perintah Tugas' => 'warning',
+                                                                'Nota Dinas' => 'info',
+                                                            ];
+                                                            $namaJenis =
+                                                                $surat->jenisSuratKeluar->jenis_suratkeluar ?? '-';
+                                                            $warna = $warnaJenis[$namaJenis] ?? 'secondary';
+                                                        @endphp
+
+                                                        <span
+                                                            class="badge bg-{{ $warna }}
+                                                         {{ $warna == 'warning' ? 'text-dark' : '' }}">
+                                                            {{ $namaJenis }}
+                                                        </span>
+                                                    </td>
+
+                                                    <td style="min-width: 250px; line-height: 1.5;">
+                                                        @php
+                                                            $adaPegawai = $surat->pegawai->count() > 0;
+                                                            $adaDetailTugas =
+                                                                !empty($surat->jumlah_hari_tugas) ||
+                                                                !empty($surat->tujuan_tugas) ||
+                                                                !empty($surat->maksud_tujuan_tugas) ||
+                                                                !empty($surat->mulai_tugas) ||
+                                                                !empty($surat->selesai_tugas);
+                                                        @endphp
+
+                                                        {{-- JIKA SEMUA DATA KOSONG --}}
+                                                        @if (!$adaPegawai && !$adaDetailTugas)
+                                                            <div class="text-center">-</div>
+                                                        @else
+                                                            {{-- PEGAWAI --}}
+                                                            @if ($adaPegawai)
+                                                                <div class="fw-bold mb-2">
+                                                                    Pegawai Ditugaskan
+                                                                </div>
+
+                                                                @foreach ($surat->pegawai as $index => $pegawai)
+                                                                    <div class="mb-2">
+                                                                        <div class="fw-bold">
+                                                                            {{ $index + 1 }}.
+                                                                            {{ $pegawai->nama ?: '-' }}
+                                                                        </div>
+                                                                        <div>
+                                                                            NIP : {{ $pegawai->nip ?: '-' }}
+                                                                        </div>
+                                                                        <div>
+                                                                            Jabatan : {{ $pegawai->jabatan ?: '-' }}
+                                                                        </div>
+                                                                    </div>
+                                                                @endforeach
+                                                            @endif
+
+                                                            {{-- GARIS PEMISAH --}}
+                                                            @if ($adaPegawai && $adaDetailTugas)
+                                                                <hr class="my-2">
+                                                            @endif
+
+                                                            {{-- DETAIL SURAT TUGAS --}}
+                                                            @if ($adaDetailTugas)
+                                                                <div>
+                                                                    <strong>Jumlah Hari :</strong>
+                                                                    {{ $surat->jumlah_hari_tugas ? $surat->jumlah_hari_tugas . ' Hari' : '-' }}
+                                                                </div>
+                                                                <div>
+                                                                    <strong>Tujuan :</strong>
+                                                                    {{ $surat->tujuan_tugas ?: '-' }}
+                                                                </div>
+                                                                <div>
+                                                                    <strong>Maksud/Tujuan :</strong>
+                                                                    {{ $surat->maksud_tujuan_tugas ?: '-' }}
+                                                                </div>
+                                                                <div>
+                                                                    <strong>Mulai :</strong>
+                                                                    {{ $surat->mulai_tugas ? \Carbon\Carbon::parse($surat->mulai_tugas)->translatedFormat('d M Y') : '-' }}
+                                                                </div>
+                                                                <div>
+                                                                    <strong>Selesai :</strong>
+                                                                    {{ $surat->selesai_tugas ? \Carbon\Carbon::parse($surat->selesai_tugas)->translatedFormat('d M Y') : '-' }}
+                                                                </div>
+                                                            @endif
+                                                        @endif
+
+                                                    </td>
+
+                                                    <td>
+                                                        {{ $surat->instansi->nama_instansi ?? '-' }}
+                                                    </td>
+
+                                                    <td>
+                                                        {{ $surat->perihal }}
+                                                    </td>
+                                                </tr>
+                                            @empty
+
+                                                <tr>
+                                                    <td colspan="4" class="text-center text-muted py-4">
+                                                        Belum ada surat keluar.
+                                                    </td>
+                                                </tr>
+                                            @endforelse
+
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            @endif
 
         </div>
     </div>
@@ -487,20 +537,33 @@
 
     <script>
         // area chart
+        // =========================================================
+        // GRAFIK SURAT MASUK & SURAT KELUAR
+        // =========================================================
+
         var options = {
-            series: [{
+
+            series: [
+
+                {
                     name: 'Surat Masuk',
-                    data: [15, 22, 18, 35, 28, 42, 50, 45, 39, 48, 55, 60]
+                    data: @json($grafikSuratMasuk)
                 },
+
                 {
                     name: 'Surat Keluar',
-                    data: [8, 14, 12, 18, 20, 28, 32, 30, 25, 35, 40, 44]
+                    data: @json($grafikSuratKeluar)
                 }
+
             ],
 
+
             chart: {
+
                 height: 350,
+
                 type: 'area',
+
                 toolbar: {
                     show: false
                 },
@@ -508,29 +571,53 @@
                 zoom: {
                     enabled: false
                 }
+
             },
 
-            colors: ['#2563eb', '#22c55e'],
+
+            colors: [
+                '#2563eb',
+                '#22c55e'
+            ],
+
+
             dataLabels: {
+
                 enabled: false
+
             },
+
 
             stroke: {
+
                 curve: 'smooth',
+
                 width: 3
+
             },
+
 
             fill: {
+
                 type: 'gradient',
+
                 gradient: {
+
                     shadeIntensity: 1,
+
                     opacityFrom: 0.35,
+
                     opacityTo: 0.05
+
                 }
+
             },
 
+
             xaxis: {
+
                 categories: [
+
                     'Jan',
                     'Feb',
                     'Mar',
@@ -543,23 +630,76 @@
                     'Okt',
                     'Nov',
                     'Des'
+
                 ]
+
             },
 
+
+            yaxis: {
+
+                min: 0,
+
+                forceNiceScale: true,
+
+                labels: {
+
+                    formatter: function(value) {
+
+                        return Math.round(value);
+
+                    }
+
+                }
+
+            },
+
+
+            tooltip: {
+
+                y: {
+
+                    formatter: function(value) {
+
+                        return value + ' surat';
+
+                    }
+
+                }
+
+            },
+
+
             legend: {
+
                 position: 'top'
+
             }
+
         };
 
+
+        // =========================================================
+        // RENDER CHART
+        // =========================================================
+
         new ApexCharts(
+
             document.querySelector("#chartSurat"),
+
             options
+
         ).render();
         // area chart
 
         //donut chart
         var donut = {
-            series: [62, 38],
+
+            series: [
+                {{ $totalSuratMasuk }},
+                {{ $totalSuratKeluar }}
+            ],
+
             chart: {
                 type: 'donut',
                 height: 320
@@ -580,17 +720,68 @@
             },
 
             dataLabels: {
-                enabled: true
+                enabled: true,
+
+                formatter: function(value) {
+                    return value.toFixed(1) + '%';
+                }
             },
 
             plotOptions: {
+
                 pie: {
+
                     donut: {
-                        size: '70%'
+
+                        size: '70%',
+
+                        labels: {
+
+                            show: true,
+
+                            total: {
+
+                                show: true,
+
+                                label: 'Total Surat',
+
+                                formatter: function(w) {
+
+                                    return w.globals.seriesTotals
+                                        .reduce((a, b) => a + b, 0);
+
+                                }
+
+                            }
+
+                        }
+
                     }
+
                 }
+
+            },
+
+            tooltip: {
+
+                y: {
+
+                    formatter: function(value) {
+
+                        return value.toLocaleString('id-ID') + ' surat';
+
+                    }
+
+                }
+
             }
+
         };
+
+
+        // =========================================================
+        // RENDER DONUT
+        // =========================================================
 
         new ApexCharts(
             document.querySelector("#chartDonut"),
@@ -599,18 +790,28 @@
         //donut chart
 
         //chart statistik unit kerja
-        let dataMasuk = [320, 210, 185, 162, 145, 110];
-        let dataKeluar = [250, 180, 160, 120, 105, 90];
-        let kategori = [
-            'BKPSDM Kab. OKI',
-            'Dinas Kesehatan',
-            'Dinas Pendidikan',
-            'BAPPEDA',
-            'BPKAD',
-            'Inspektorat'
-        ];
+        // =========================================================
+        // DATA STATISTIK INSTANSI DARI DATABASE
+        // =========================================================
+
+        let dataMasuk = @json($suratMasukPerInstansi->pluck('total')->map(fn($total) => (int) $total));
+
+        let kategoriMasuk = @json(
+            $suratMasukPerInstansi->map(function ($item) {
+                return $item->instansi->nama_instansi ?? 'Tidak diketahui';
+            }));
+
+
+        let dataKeluar = @json($suratKeluarPerInstansi->pluck('total')->map(fn($total) => (int) $total));
+
+        let kategoriKeluar = @json(
+            $suratKeluarPerInstansi->map(function ($item) {
+                return $item->instansi->nama_instansi ?? 'Tidak diketahui';
+            }));
+
 
         var optionsInstansi = {
+
             series: [{
                 name: 'Jumlah Surat',
                 data: dataMasuk
@@ -623,7 +824,9 @@
                     show: false
                 }
             },
+
             colors: ['#2563EB'],
+
             plotOptions: {
                 bar: {
                     horizontal: true,
@@ -631,12 +834,13 @@
                     barHeight: '45%'
                 }
             },
+
             dataLabels: {
                 enabled: true
             },
 
             xaxis: {
-                categories: kategori
+                categories: kategoriMasuk
             },
 
             grid: {
@@ -646,7 +850,6 @@
             legend: {
                 show: false
             }
-
         };
 
         var chartInstansi = new ApexCharts(
@@ -658,17 +861,26 @@
 
         //script tombol masuk
         $('#btnMasuk').click(function() {
+
             chartInstansi.updateSeries([{
+                name: 'Surat Masuk',
                 data: dataMasuk
             }]);
 
             chartInstansi.updateOptions({
-                colors: ['#2563EB']
+                colors: ['#2563EB'],
+                xaxis: {
+                    categories: kategoriMasuk
+                }
             });
-            $('#judulInstansi').text('Statistik Surat Masuk per Instansi');
+
+            $('#judulInstansi')
+                .text('Statistik Surat Masuk per Instansi');
+
             $('#btnMasuk')
                 .removeClass('btn-outline-primary')
                 .addClass('btn-primary');
+
             $('#btnKeluar')
                 .removeClass('btn-success')
                 .addClass('btn-outline-success');
@@ -676,16 +888,26 @@
 
         //tombol keluar
         $('#btnKeluar').click(function() {
+
             chartInstansi.updateSeries([{
+                name: 'Surat Keluar',
                 data: dataKeluar
             }]);
+
             chartInstansi.updateOptions({
-                colors: ['#22C55E']
+                colors: ['#22C55E'],
+                xaxis: {
+                    categories: kategoriKeluar
+                }
             });
-            $('#judulInstansi').text('Statistik Surat Keluar per Instansi');
+
+            $('#judulInstansi')
+                .text('Statistik Surat Keluar per Instansi');
+
             $('#btnKeluar')
                 .removeClass('btn-outline-success')
                 .addClass('btn-success');
+
             $('#btnMasuk')
                 .removeClass('btn-primary')
                 .addClass('btn-outline-primary');

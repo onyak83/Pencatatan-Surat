@@ -1,44 +1,20 @@
-<style>
-    .badge-masuk {
-        background: #2563EB;
-        color: #fff;
-        padding: 6px 14px;
-        border-radius: 20px;
-        font-size: 12px;
-        font-weight: 600;
-    }
-
-    .badge-keluar {
-        background: #22C55E;
-        color: #fff;
-        padding: 6px 14px;
-        border-radius: 20px;
-        font-size: 12px;
-        font-weight: 600;
-    }
-</style>
-
 <div class="row">
     <div class="col-md-12">
         <div class="card">
             <div class="card-header">
-                <a href="{{ route('create.Surat') }}" class="btn btn-primary btn-round">
-                    <i class="fa fa-plus me-1"></i> Tambah Surat
+                <a href="{{ route('create.Pangkat') }}" class="btn btn-primary btn-round">
+                    <i class="fa fa-plus me-1"></i> Tambah Pangkat
                 </a>
             </div>
 
             <div class="card-body">
                 <div class="table-responsive">
-                    <table id="dataSurat" class="display table table-striped table-hover">
+                    <table id="dataPangkat" class="display table table-striped table-hover">
                         <thead>
-                            <tr>
+                            <tr class='text-center'>
                                 <th>No</th>
-                                <th>Jenis Surat</th>
-                                <th>No. Agenda</th>
-                                <th>No. & Tgl.Surat</th>
-                                <th>Pengirim / Tujuan</th>
-                                <th>Perihal</th>
-                                <th>File</th>
+                                <th>Golongan</th>
+                                <th>Pangkat</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
@@ -55,11 +31,11 @@
 
     <script>
         $(document).ready(function() {
-            $('#dataSurat').DataTable({
+            $('#dataPangkat').DataTable({
                 processing: true,
                 serverSide: true,
                 responsive: true, // ✅ Aktifkan fitur responsif
-                ajax: "{{ route('get.Surat') }}", // Pastikan route sesuai
+                ajax: "{{ route('get.Pangkat') }}", // Pastikan route sesuai
                 columns: [{
                         data: null,
                         orderable: false,
@@ -71,34 +47,13 @@
                         }
                     },
                     {
-                        data: 'jenis_surat',
-                        name: 'jenis_surat',
+                        data: 'nm_gol',
+                        name: 'nm_gol',
                         className: 'text-center'
                     },
                     {
-                        data: 'no_agenda',
-                        name: 'no_agenda',
-                        className: 'text-center'
-                    },
-                    {
-                        data: 'no_surat',
-                        name: 'no_surat',
-                        className: 'text-center'
-                    },
-                    {
-                        data: 'instansi',
-                        name: 'instansi',
-                        className: 'text-center'
-                    },
-                    {
-                        data: 'perihal',
-                        name: 'perihal',
-                        className: 'text-center'
-                    },
-                    {
-                        data: 'lihatfile',
-                        name: 'lihatfile',
-                        className: 'text-center'
+                        data: 'nm_pangkat',
+                        name: 'nm_pangkat',
                     },
                     {
                         data: 'aksi',
@@ -117,17 +72,6 @@
                 info: true,
                 ordering: true
             });
-        });
-    </script>
-
-    <script>
-        $(document).on('click', '.btn-view-file', function() {
-            let file = $(this).data('file');
-            $('#pdfViewer').attr('src', file);
-        });
-
-        $('#modalFileSurat').on('hidden.bs.modal', function() {
-            $('#pdfViewer').attr('src', '');
         });
     </script>
 

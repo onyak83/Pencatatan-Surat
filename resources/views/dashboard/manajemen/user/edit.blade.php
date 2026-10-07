@@ -115,8 +115,7 @@
 
                                     </div>
 
-                                    <div class="card-action text-center">
-
+                                    <div class="card-action text-center mt-3">
                                         <a href="{{ route('index.User') }}" class="btn btn-danger">
                                             <i class="fa fa-times"></i> Batal
                                         </a>
@@ -124,17 +123,13 @@
                                         <button type="submit" class="btn btn-success">
                                             <i class="fa fa-save"></i> Update
                                         </button>
-
                                     </div>
-
                                 </form>
-
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 @endsection

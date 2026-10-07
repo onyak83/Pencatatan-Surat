@@ -1,4 +1,4 @@
-<a href="{{ route('edit.Surat', $surat->id) }}" class="btn btn-warning btn-icon btn-round" title="Edit">
+<a href="{{ route('edit.SuratMasuk', $surat->id) }}" class="btn btn-warning btn-icon btn-round" title="Edit">
     <i class="fas fa-edit"></i>
 </a>
 
@@ -6,7 +6,7 @@
     <i class="fas fa-trash"></i>
 </button>
 
-<form id="form-delete-{{ $surat->id }}" action="{{ route('delete.Surat', $surat->id) }}" method="POST"
+<form id="form-delete-{{ $surat->id }}" action="{{ route('delete.SuratMasuk', $surat->id) }}" method="POST"
     style="display:none">
     @csrf
     @method('DELETE')

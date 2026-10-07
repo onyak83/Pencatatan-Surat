@@ -3,7 +3,7 @@
         <div class="card">
             <div class="card-header">
                 <a href="{{ route('create.SifatSurat') }}" class="btn btn-primary btn-round">
-                    <i class="fa fa-plus me-1"></i> Tambah User
+                    <i class="fa fa-plus me-1"></i> Tambah Sifat Surat
                 </a>
             </div>
 
@@ -11,7 +11,7 @@
                 <div class="table-responsive">
                     <table id="sifat_Surat" class="display table table-striped table-hover">
                         <thead>
-                            <tr>
+                            <tr class='text-center'>
                                 <th>No</th>
                                 <th>Sifat Surat</th>
                                 <th>Aksi</th>

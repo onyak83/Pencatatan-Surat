@@ -39,45 +39,63 @@
                      <h4 class="text-section">Surat Menyurat</h4>
                  </li>
 
-                 <li class="nav-item">
-                     <a href="{{ route('index.Surat') }}">
+                 <li
+                     class="nav-item {{ request()->routeIs(['index.SuratMasuk', 'create.SuratMasuk', 'edit.SuratMasuk', 'index.SuratKeluar', 'create.SuratKeluar', 'edit.SuratKeluar']) ? 'active' : '' }}">
+                     <a data-bs-toggle="collapse" href="#menuSurat"
+                         class="{{ request()->routeIs(['index.SuratMasuk', 'create.SuratMasuk', 'edit.SuratMasuk', 'index.SuratKeluar', 'create.SuratKeluar', 'edit.SuratKeluar']) ? '' : 'collapsed' }}"
+                         aria-expanded="{{ request()->routeIs(['index.SuratMasuk', 'create.SuratMasuk', 'edit.SuratMasuk', 'index.SuratKeluar', 'create.SuratKeluar', 'edit.SuratKeluar']) ? 'true' : 'false' }}">
                          <i class="fas fa-envelope"></i>
                          <p>Surat</p>
+                         <span class="caret"></span>
+                     </a>
+
+                     <div class="collapse {{ request()->routeIs(['index.SuratMasuk', 'create.SuratMasuk', 'edit.SuratMasuk', 'index.SuratKeluar', 'create.SuratKeluar', 'edit.SuratKeluar']) ? 'show' : '' }}"
+                         id="menuSurat">
+                         <ul class="nav nav-collapse">
+                             <li
+                                 class="{{ request()->routeIs('index.SuratMasuk', 'create.SuratMasuk', 'edit.SuratMasuk') ? 'active' : '' }}">
+                                 <a href="{{ route('index.SuratMasuk') }}">
+                                     <span class="sub-item">Surat Masuk</span>
+                                 </a>
+                             </li>
+                             <li
+                                 class="{{ request()->routeIs('index.SuratKeluar', 'create.SuratKeluar', 'edit.SuratKeluar', 'edit.SuratKeluar') ? 'active' : '' }}">
+                                 <a href="{{ route('index.SuratKeluar') }}">
+                                     <span class="sub-item">Surat Keluar</span>
+                                 </a>
+                             </li>
+                         </ul>
+                     </div>
+
+                 </li>
+
+                 <li class="nav-item">
+                     <a href="{{ route('index.DisposisiSuratMasuk') }}">
+                         <i class="fas fa-sync"></i>
+                         <p>Disposisi</p>
                      </a>
                  </li>
 
-
-                 <li class="nav-item">
-                     <a data-bs-toggle="collapse" href="#base">
+                 <li
+                     class="nav-item {{ request()->routeIs(['index.AgendaSuratMasuk', 'index.EkspedisiSuratKeluar', 'index.ArsipDigital']) ? 'active' : '' }}">
+                     <a data-bs-toggle="collapse" href="#base"
+                         class="{{ request()->routeIs(['index.AgendaSuratMasuk', 'index.EkspedisiSuratKeluar', 'index.ArsipDigital']) ? '' : 'collapsed' }}"
+                         aria-expanded="{{ request()->routeIs(['index.AgendaSuratMasuk', 'index.EkspedisiSuratKeluar', 'index.ArsipDigital']) ? 'true' : 'false' }}">
                          <i class="fas fa-layer-group"></i>
                          <p>Laporan</p>
                          <span class="caret"></span>
                      </a>
-                     <div class="collapse" id="base">
+                     <div class="collapse {{ request()->routeIs(['index.AgendaSuratMasuk', 'index.EkspedisiSuratKeluar', 'index.ArsipDigital']) ? 'show' : '' }}"
+                         id="base">
                          <ul class="nav nav-collapse">
-                             <li>
+                             <li class="{{ request()->routeIs('index.AgendaSuratMasuk') ? 'active' : '' }}">
                                  <a href="{{ route('index.AgendaSuratMasuk') }}">
                                      <span class="sub-item">Buku Agenda Surat Masuk</span>
                                  </a>
                              </li>
-                             <li>
-                                 <a href="components/avatars.html">
+                             <li class="{{ request()->routeIs('index.EkspedisiSuratKeluar') ? 'active' : '' }}">
+                                 <a href="{{ route('index.EkspedisiSuratKeluar') }}">
                                      <span class="sub-item">Buku Ekspedisi Surat Keluar</span>
-                                 </a>
-                             </li>
-                             <li>
-                                 <a href="components/buttons.html">
-                                     <span class="sub-item">Rekapitulasi Surat</span>
-                                 </a>
-                             </li>
-                             <li>
-                                 <a href="{{ route('index.ArsipDigital') }}">
-                                     <span class="sub-item">Arsip Surat Digital</span>
-                                 </a>
-                             </li>
-                             <li>
-                                 <a href="components/gridsystem.html">
-                                     <span class="sub-item">Statistik Surat</span>
                                  </a>
                              </li>
 
@@ -85,33 +103,59 @@
                      </div>
                  </li>
 
-                 <li class="nav-section">
-                     <span class="sidebar-mini-icon">
-                         <i class="fa fa-ellipsis-h"></i>
-                     </span>
-                     <h4 class="text-section">Manajemen Data</h4>
-                 </li>
+
 
                  <li class="nav-item">
-                     <a href="{{ route('index.User') }}">
-                         <i class="fas fa-users"></i>
-                         <p>User</p>
+                     <a href="{{ route('index.ArsipDigital') }}">
+                         <i class="fa fa-archive"></i>
+                         <p>Arsip Surat Digital</p>
                      </a>
                  </li>
 
-                 <li class="nav-item">
-                     <a href="{{ route('index.SifatSurat') }}">
-                         <i class="far fa-envelope"></i>
-                         <p>Sifat Surat</p>
-                     </a>
-                 </li>
 
-                 <li class="nav-item">
-                     <a href="{{ route('index.Instansi') }}">
-                         <i class="fas fa-building"></i>
-                         <p>Instansi</p>
-                     </a>
-                 </li>
+                 @if (in_array(auth()->user()->role_id, [1, 2]))
+                     <li class="nav-section">
+                         <span class="sidebar-mini-icon">
+                             <i class="fa fa-ellipsis-h"></i>
+                         </span>
+                         <h4 class="text-section">Manajemen Data</h4>
+                     </li>
+
+                     <li class="nav-item">
+                         <a href="{{ route('index.User') }}">
+                             <i class="fas fa-users"></i>
+                             <p>User</p>
+                         </a>
+                     </li>
+
+                     <li class="nav-item">
+                         <a href="{{ route('index.Pegawai') }}">
+                             <i class="fas fa-users"></i>
+                             <p>Pegawai</p>
+                         </a>
+                     </li>
+
+                     <li class="nav-item">
+                         <a href="{{ route('index.Pangkat') }}">
+                             <i class="fas fa-chart-line"></i>
+                             <p>Pangkat/Gol</p>
+                         </a>
+                     </li>
+
+                     <li class="nav-item">
+                         <a href="{{ route('index.SifatSurat') }}">
+                             <i class="far fa-envelope"></i>
+                             <p>Sifat Surat</p>
+                         </a>
+                     </li>
+
+                     <li class="nav-item">
+                         <a href="{{ route('index.Instansi') }}">
+                             <i class="fas fa-building"></i>
+                             <p>Instansi</p>
+                         </a>
+                     </li>
+                 @endif
 
                  <li class="nav-section">
                      <span class="sidebar-mini-icon">

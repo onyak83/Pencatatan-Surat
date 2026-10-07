@@ -3,19 +3,21 @@
 namespace App\Http\Controllers;
 
 use App\Models\Instansi;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Hash;
-// use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Validator;
-use Yajra\DataTables\Facades\DataTables;
-// use Illuminate\Support\Str;
-use RealRashid\SweetAlert\Facades\Alert;
+use App\Models\Pangkat;
+use App\Models\Pegawaipu;
 use App\Models\Role;
 use App\Models\Sifatsurat;
 use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+// use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+// use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
+use RealRashid\SweetAlert\Facades\Alert;
+use Yajra\DataTables\Facades\DataTables;
 
 class ManajemenController extends Controller
 {
@@ -28,7 +30,7 @@ class ManajemenController extends Controller
     {
         if ($request->ajax()) {
             $dataUser = User::with('role') // Eager Loading untuk menghindari query berulang
-                ->whereIn('role_id', [1, 2]) // Perbaikan di bagian where
+                ->whereIn('role_id', [1, 2, 3,4,5,6]) // Perbaikan di bagian where
                 ->orderBy('created_at', 'desc');
 
             return datatables()->of($dataUser)
@@ -43,7 +45,7 @@ class ManajemenController extends Controller
 
     public function createUser()
     {
-        $role=Role::all();
+        $role = Role::all();
 
         return view('dashboard.manajemen.user.create', compact('role'));
     }
@@ -203,6 +205,412 @@ class ManajemenController extends Controller
             return redirect()->back();
         }
     }
+
+    //pegawai
+    public function indexPegawai()
+    {
+        return view('dashboard.manajemen.pegawai.index');
+    }
+
+    public function getPegawai(Request $request)
+    {
+        if (! $request->ajax()) {
+            abort(404);
+        }
+
+        $dataPegawai = Pegawaipu::with('pangkat')
+              ->orderByRaw("
+            CASE
+                WHEN urut_hirarki IS NULL OR urut_hirarki = '' THEN 1
+                ELSE 0
+            END
+        ")
+              ->orderByRaw("
+            CASE
+                WHEN urut_hirarki IS NULL OR urut_hirarki = '' THEN 999999
+                ELSE CAST(urut_hirarki AS UNSIGNED)
+            END
+        ");
+
+        return DataTables::eloquent($dataPegawai)
+            ->addIndexColumn()
+            ->addColumn('identitas', function ($row) {
+                return '
+                <strong>'.$row->nama.'</strong><br>
+                <small>NIP.  '.$row->nip.'</small><br>
+                <small> '.$row->pangkat->nm_gol.'</small> <small> '.$row->pangkat->nm_pangkat.'</small>
+            ';
+            })
+            ->addColumn('aksi', function ($row) {
+                return view(
+                    'dashboard.manajemen.pegawai.aksi',
+                    compact('row')
+                );
+            })
+            ->rawColumns(['aksi', 'identitas'])
+            ->make(true);
+    }
+
+    public function createPegawai()
+    {
+        $dataPangkat = Pangkat::all();
+
+        return view('dashboard.manajemen.pegawai.create', compact('dataPangkat'));
+    }
+
+    public function storePegawai(Request $request)
+    {
+        $rules = [
+        'nama'       => 'required|string|max:255',
+        'nip'        => 'required|digits:18|unique:pegawaipus,nip',
+        'pangkat_id' => 'required|exists:pangkats,id',
+        'jabatan'    => 'required|string|max:255',
+        'no_hp'      => 'required|regex:/^[0-9]{10,15}$/',
+        'email'      => 'required|email|max:255|unique:pegawaipus,email',
+        'alamat'     => 'nullable|string',
+    ];
+        $messages = [
+        'nama.required' => 'Nama pegawai wajib diisi.',
+        'nama.max'      => 'Nama pegawai maksimal 255 karakter.',
+        'nip.required' => 'NIP wajib diisi.',
+        'nip.digits'   => 'NIP harus terdiri dari 18 digit angka.',
+        'nip.unique'   => 'NIP sudah tersedia.',
+        'pangkat_id.required' => 'Pangkat wajib dipilih.',
+        'pangkat_id.exists'   => 'Pangkat tidak ditemukan.',
+        'jabatan.required' => 'Jabatan wajib diisi.',
+        'jabatan.max'      => 'Jabatan maksimal 255 karakter.',
+        'no_hp.required' => 'Nomor HP wajib diisi.',
+        'no_hp.regex'    => 'Nomor HP harus berupa angka 10 sampai 15 digit.',
+        'email.required' => 'Email wajib diisi.',
+        'email.email'    => 'Format email tidak valid.',
+        'email.unique'   => 'Email sudah digunakan.',
+    ];
+
+        $validator = Validator::make($request->all(), $rules, $messages);
+
+        if ($validator->fails()) {
+            return redirect()
+            ->back()
+            ->withErrors($validator)
+            ->withInput();
+        }
+
+        DB::beginTransaction();
+
+        try {
+            Pegawaipu::create([
+            'nama' => trim($request->nama),
+            'nip' => trim($request->nip),
+           'pangkat_id' => $request->pangkat_id,
+           'jabatan' => trim($request->jabatan),
+            'no_hp' => trim($request->no_hp),
+            'email' => strtolower(trim($request->email)),
+            'alamat' => $request->alamat,
+            'urut_hirarki' => $request->urut_hirarki,
+        ]);
+            DB::commit();
+            Alert::success(
+                'Berhasil',
+                'Data Pegawai berhasil ditambahkan.'
+            );
+
+            return redirect()->route('index.Pegawai');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Store Pegawai Error', [
+                'request' => $request->except('_token'),
+                'message' => $e->getMessage(),
+                'file'    => $e->getFile(),
+                'line'    => $e->getLine(),
+            ]);
+
+            Alert::error('Gagal', 'Terjadi kesalahan saat menyimpan data.');
+
+            return redirect()->back()->withInput();
+        }
+    }
+
+    public function editPegawai(string $id)
+    {
+        $dataPangkat = Pangkat::all();
+        $editPegawai = Pegawaipu::with('pangkat')->findOrFail($id);
+
+        return view('dashboard.manajemen.pegawai.edit', compact('dataPangkat', 'editPegawai'));
+    }
+
+    public function updatePegawai(Request $request, string $id)
+    {
+        $rules = [
+            'nama'       => 'required|string|max:255',
+            'nip'        => 'required|digits:18|unique:pegawaipus,nip,' . $id,
+            'pangkat_id' => 'required|exists:pangkats,id',
+            'jabatan'    => 'required|string|max:255',
+            'no_hp'      => 'required|regex:/^[0-9]{10,15}$/',
+            'email'      => 'required|email|max:255|unique:pegawaipus,email,' . $id,
+            'alamat'     => 'nullable|string',
+        ];
+
+        $messages = [
+            'nama.required' => 'Nama pegawai wajib diisi.',
+            'nama.max'      => 'Nama pegawai maksimal 255 karakter.',
+            'nip.required' => 'NIP wajib diisi.',
+            'nip.digits'   => 'NIP harus terdiri dari 18 digit angka.',
+            'nip.unique'   => 'NIP sudah tersedia.',
+            'pangkat_id.required' => 'Pangkat wajib dipilih.',
+            'pangkat_id.exists'   => 'Pangkat tidak ditemukan.',
+            'jabatan.required' => 'Jabatan wajib diisi.',
+            'no_hp.required' => 'Nomor HP wajib diisi.',
+            'no_hp.regex'    => 'Nomor HP harus berupa angka 10 sampai 15 digit.',
+            'email.required' => 'Email wajib diisi.',
+            'email.email'    => 'Format email tidak valid.',
+            'email.unique'   => 'Email sudah digunakan.',
+        ];
+
+        $validator = Validator::make($request->all(), $rules, $messages);
+
+        if ($validator->fails()) {
+            return redirect()
+            ->back()
+            ->withErrors($validator)
+            ->withInput();
+        }
+
+        DB::beginTransaction();
+
+        try {
+            $pegawai = Pegawaipu::findOrFail($id);
+
+            $pegawai->update([
+            'nama' => trim($request->nama),
+            'nip' => trim($request->nip),
+            'pangkat_id' => $request->pangkat_id,
+            'jabatan' => trim($request->jabatan),
+            'no_hp' => trim($request->no_hp),
+            'email' => strtolower(trim($request->email)),
+            'alamat' => $request->alamat,
+            'urut_hirarki' => $request->urut_hirarki,
+        ]);
+
+            DB::commit();
+
+            Alert::success('Berhasil', 'Data Pegawai berhasil diperbarui.');
+            return redirect()->route('index.Pegawai');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Update Pegawai Error', [
+            'pegawai_id' => $id,
+            'request' => $request->except('_token', '_method'),
+            'message' => $e->getMessage(),
+            'file' => $e->getFile(),
+            'line' => $e->getLine(),
+        ]);
+
+            Alert::error('Gagal', 'Terjadi kesalahan saat memperbarui data.');
+
+            return redirect()->back()->withInput();
+        }
+    }
+
+    public function deletePegawai(string $id)
+    {
+        DB::beginTransaction();
+
+        try {
+            $pegawaipu = Pegawaipu::findOrFail($id);
+            $pegawaipu->delete();
+            DB::commit();
+
+            Alert::success('Berhasil', 'Data Pegawai berhasil dihapus.');
+
+            return redirect()->route('index.Pegawai');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Delete Pegawai Error', [
+                'sifatsurat_id' => $id,
+                'message'       => $e->getMessage(),
+                'file'          => $e->getFile(),
+                'line'          => $e->getLine(),
+            ]);
+
+            Alert::error('Gagal', 'Terjadi kesalahan saat menghapus data.');
+            return redirect()->back();
+        }
+    }
+
+
+    //pangkat - gol
+    public function indexPangkat()
+    {
+        return view('dashboard.manajemen.pangkat.index');
+    }
+
+    public function getPangkat(Request $request)
+    {
+        if (! $request->ajax()) {
+            abort(404);
+        }
+
+        $dataPangkat = Pangkat::query();
+
+        return DataTables::eloquent($dataPangkat)
+            ->addIndexColumn()
+            ->addColumn('aksi', function ($row) {
+                return view(
+                    'dashboard.manajemen.pangkat.aksi',
+                    compact('row')
+                );
+            })
+
+            ->rawColumns(['aksi'])
+            ->make(true);
+    }
+
+    public function createPangkat()
+    {
+        return view('dashboard.manajemen.pangkat.create');
+    }
+
+    public function storePangkat(Request $request)
+    {
+        $rules = [
+            'nm_pangkat' => 'required|string|max:50',
+            'nm_gol' => 'required|string|max:10',
+        ];
+
+        $messages = [
+            'nm_pangkat.required' => 'Nama Pangkat wajib diisi.',
+            'nm_pangkat.max'      => 'Nama Pangkat maksimal 50 karakter.',
+            'nm_gol.required' => 'Nama Golongan wajib diisi.',
+            'nm_gol.max'      => 'Nama Golongan maksimal 10 karakter.',
+        ];
+
+        $validator = Validator::make($request->all(), $rules, $messages);
+
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        DB::beginTransaction();
+
+        try {
+            Pangkat::create([
+                'nm_pangkat' => trim($request->nm_pangkat),
+                'nm_gol' => trim($request->nm_gol),
+            ]);
+
+            DB::commit();
+
+            Alert::success('Berhasil', 'Data Pangkat berhasil ditambahkan.');
+
+            return redirect()->route('index.Pangkat');
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            Log::error('Store Pangkat Error', [
+                'request' => $request->except('_token'),
+                'message' => $e->getMessage(),
+                'file'    => $e->getFile(),
+                'line'    => $e->getLine(),
+            ]);
+
+            Alert::error('Gagal', 'Terjadi kesalahan saat menyimpan data.');
+
+            return redirect()->back()->withInput();
+        }
+    }
+
+    public function editPangkat(string $id)
+    {
+        $editpangkatGol = Pangkat::findOrFail($id);
+
+        return view('dashboard.manajemen.pangkat.edit', compact('editpangkatGol'));
+    }
+
+    public function updatePangkat(Request $request, string $id)
+    {
+        $rules = [
+            'nm_pangkat' => 'required|string|max:50',
+            'nm_gol' => 'required|string|max:10',
+        ];
+
+        $messages = [
+            'nm_pangkat.required' => 'Nama Pangkat wajib diisi.',
+            'nm_pangkat.max'      => 'Nama Pangkat maksimal 50 karakter.',
+            'nm_gol.required' => 'Nama Golongan wajib diisi.',
+            'nm_gol.max'      => 'Nama Golongan maksimal 10 karakter.',
+        ];
+
+        $validator = Validator::make($request->all(), $rules, $messages);
+
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        DB::beginTransaction();
+
+        try {
+            $pangkatGol = Pangkat::findOrFail($id);
+
+            $pangkatGol->update([
+                'nm_pangkat' => trim($request->nm_pangkat),
+                'nm_gol' => trim($request->nm_gol),
+            ]);
+
+            DB::commit();
+
+            Alert::success('Berhasil', 'Data Pangkat berhasil diperbarui.');
+
+            return redirect()->route('index.Pangkat');
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            Log::error('Update Pangkat Error', [
+                'sifatsurat_id' => $id,
+                'request'       => $request->except('_token', '_method'),
+                'message'       => $e->getMessage(),
+                'file'          => $e->getFile(),
+                'line'          => $e->getLine(),
+            ]);
+
+            Alert::error('Gagal', 'Terjadi kesalahan saat memperbarui data.');
+
+            return redirect()->back()->withInput();
+        }
+    }
+
+    public function deletePangkat(string $id)
+    {
+        DB::beginTransaction();
+
+        try {
+            $pangkatGol = Pangkat::findOrFail($id);
+            $pangkatGol->delete();
+            DB::commit();
+
+            Alert::success('Berhasil', 'Data Pangkat berhasil dihapus.');
+
+            return redirect()->route('index.Pangkat');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Delete Pangkat Error', [
+                'sifatsurat_id' => $id,
+                'message'       => $e->getMessage(),
+                'file'          => $e->getFile(),
+                'line'          => $e->getLine(),
+            ]);
+
+            Alert::error('Gagal', 'Terjadi kesalahan saat menghapus data.');
+            return redirect()->back();
+        }
+    }
+
+
+
+
 
     //sifat surat
     public function indexSifatSurat()
@@ -385,11 +793,11 @@ class ManajemenController extends Controller
         return DataTables::eloquent($dataInstansi)
         ->addIndexColumn()
         ->editColumn('nama_instansi', function ($row) {
-                    $alamat = $row->alamat
+            $alamat = $row->alamat
                 ? e($row->alamat)
                 : '<span class="text-muted">Alamat belum diisi</span>';
 
-                    return '
+            return '
                 <div class="text-start">
                     <strong>' . e($row->nama_instansi) . '</strong><br>
 
@@ -581,7 +989,7 @@ class ManajemenController extends Controller
                     'data' => [
                         'id' => $instansi->id,
                         'nama_instansi' => $instansi->nama_instansi,
-                    ]
+                    ],
                 ]);
             }
 

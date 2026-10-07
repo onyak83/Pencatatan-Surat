@@ -12,7 +12,7 @@ class Sifatsurat extends Model
     protected $table = 'sifatsurats';
     protected $fillable = ['nama_sifat'];
 
-    public function surat()
+    public function suratMasuk()
     {
         return $this->hasMany(Surat::class, 'sifat_surat_id');
     }

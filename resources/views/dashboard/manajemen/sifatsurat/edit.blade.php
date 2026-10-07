@@ -44,7 +44,7 @@
                                         @csrf
                                         @method('PUT')
 
-                                        <div class="form-group mb-3">
+                                        <div class="form-group">
                                             <label>Nama Sifat Surat<span class="text-danger">*</span></label>
 
                                             <input type="text" name="nama_sifat"
@@ -59,8 +59,7 @@
                                             @enderror
                                         </div>
 
-                                        <div class="text-center mt-4">
-
+                                        <div class="card-action text-center mt-3">
                                             <a href="{{ route('index.SifatSurat') }}" class="btn btn-danger">
                                                 <i class="fa fa-times"></i> Batal
                                             </a>

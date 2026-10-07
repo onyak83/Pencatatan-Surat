@@ -30,7 +30,7 @@ class CreateInstansisTable extends Migration
                 'Swasta',
                 'Perguruan Tinggi',
                 'Organisasi',
-                'Lainnya'
+                'Lainnya',
             ])->default('Lainnya');
             $table->text('alamat')->nullable();
             $table->string('telepon', 30)->nullable();

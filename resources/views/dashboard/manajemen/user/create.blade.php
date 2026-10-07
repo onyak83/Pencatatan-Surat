@@ -38,7 +38,6 @@
                                     @csrf
 
                                     <div class="row">
-
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>Nama</label>
@@ -51,7 +50,10 @@
                                             <div class="form-group">
                                                 <label>Email</label>
                                                 <input type="email" name="email" class="form-control"
-                                                    value="{{ old('email') }}" required>
+                                                    value="{{ old('email') }}" placeholder="example@gmail.com"
+                                                    pattern="[a-zA-Z0-9._%+-]+@gmail\.com"
+                                                    title="Format email harus menggunakan @gmail.com, contoh example@gmail.com"
+                                                    required>
                                             </div>
                                         </div>
 
@@ -93,7 +95,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="card-action text-center">
+                                    <div class="card-action text-center mt-3">
                                         <a href="{{ route('index.User') }}" class="btn btn-danger">
                                             Batal
                                         </a>

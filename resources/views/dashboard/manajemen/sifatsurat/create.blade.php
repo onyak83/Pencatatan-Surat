@@ -38,13 +38,13 @@
                                     <form action="{{ route('store.SifatSurat') }}" method="POST">
                                         @csrf
 
-                                        <div class="form-group mb-3">
+                                        <div class="form-group">
                                             <label>Nama Sifat Surat</label>
                                             <input type="text" name="nama_sifat" class="form-control"
                                                 value="{{ old('nama_sifat') }}" required>
                                         </div>
 
-                                        <div class="text-center mt-4">
+                                        <div class="card-action text-center mt-3">
                                             <a href="{{ route('index.SifatSurat') }}" class="btn btn-danger">
                                                 Batal
                                             </a>

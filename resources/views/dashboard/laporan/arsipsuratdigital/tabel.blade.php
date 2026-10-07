@@ -174,59 +174,204 @@
 
 
 <div class="modal fade" id="modalDetail" tabindex="-1">
-    <div class="modal-dialog modal-lg">
+
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+
         <div class="modal-content">
+
             <div class="modal-header bg-primary text-white">
+
                 <h5 class="modal-title">
-                    <i class="fas fa-file-alt"></i>
+                    <i class="fas fa-file-alt me-2"></i>
                     Detail Arsip Surat
                 </h5>
-                <button class="btn-close btn-close-white" data-bs-dismiss="modal">
+
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal">
                 </button>
+
             </div>
 
+
             <div class="modal-body">
+
                 <table class="table table-bordered">
+
                     <tr>
                         <th width="30%">Nomor Surat</th>
-                        <td id="d_no_surat"></td>
+                        <td id="d_no_surat">-</td>
                     </tr>
+
                     <tr>
                         <th>Jenis Surat</th>
-                        <td id="d_jenis"></td>
+                        <td id="d_jenis">-</td>
                     </tr>
+
                     <tr>
                         <th>Tanggal Surat</th>
-                        <td id="d_tanggal"></td>
+                        <td id="d_tanggal">-</td>
                     </tr>
+
                     <tr>
                         <th>No Agenda</th>
-                        <td id="d_agenda"></td>
+                        <td id="d_agenda">-</td>
                     </tr>
+
                     <tr>
                         <th>Instansi</th>
-                        <td id="d_instansi"></td>
+                        <td id="d_instansi">-</td>
                     </tr>
+
                     <tr>
                         <th>Sifat Surat</th>
-                        <td id="d_sifat"></td>
+                        <td id="d_sifat">-</td>
                     </tr>
+
                     <tr>
                         <th>Perihal</th>
-                        <td id="d_perihal"></td>
+                        <td id="d_perihal">-</td>
                     </tr>
+
                     <tr>
                         <th>Lampiran</th>
-                        <td id="d_lampiran"></td>
+                        <td id="d_lampiran">-</td>
                     </tr>
+
                     <tr>
                         <th>Keterangan</th>
-                        <td id="d_keterangan"></td>
+                        <td id="d_keterangan">-</td>
                     </tr>
+
                 </table>
+
+
+                {{-- ================================================= --}}
+                {{-- DATA KHUSUS SURAT KELUAR --}}
+                {{-- ================================================= --}}
+
+                <div id="detailSuratKeluar" class="mt-4" style="display:none;">
+
+                    <div class="card border-success">
+
+                        <div class="card-header bg-success text-white">
+
+                            <strong>
+                                <i class="fas fa-briefcase me-2"></i>
+                                Data Surat Tugas
+                            </strong>
+
+                        </div>
+
+                        <div class="card-body">
+
+
+                            {{-- Pegawai --}}
+                            <h6 class="fw-bold mb-3">
+                                <i class="fas fa-users me-2"></i>
+                                Pegawai Ditugaskan
+                            </h6>
+
+                            <div id="d_pegawai">
+                                -
+                            </div>
+
+
+                            <hr>
+
+
+                            {{-- Detail tugas --}}
+                            <div class="row">
+
+                                <div class="col-md-6 mb-2">
+
+                                    <strong>
+                                        Jumlah Hari
+                                    </strong>
+
+                                    <div id="d_jumlah_hari">
+                                        -
+                                    </div>
+
+                                </div>
+
+
+                                <div class="col-md-6 mb-2">
+
+                                    <strong>
+                                        Tujuan
+                                    </strong>
+
+                                    <div id="d_tujuan">
+                                        -
+                                    </div>
+
+                                </div>
+
+
+                                <div class="col-md-12 mb-2">
+
+                                    <strong>
+                                        Maksud/Tujuan
+                                    </strong>
+
+                                    <div id="d_maksud_tujuan">
+                                        -
+                                    </div>
+
+                                </div>
+
+
+                                <div class="col-md-6 mb-2">
+
+                                    <strong>
+                                        Mulai
+                                    </strong>
+
+                                    <div id="d_mulai">
+                                        -
+                                    </div>
+
+                                </div>
+
+
+                                <div class="col-md-6 mb-2">
+
+                                    <strong>
+                                        Selesai
+                                    </strong>
+
+                                    <div id="d_selesai">
+                                        -
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                {{-- File --}}
+                <div class="mt-3 text-end">
+
+                    <a href="#" id="btnLihatPdf" target="_blank" class="btn btn-primary" style="display:none;">
+
+                        <i class="fas fa-file-pdf me-1"></i>
+                        Lihat Surat
+
+                    </a>
+
+                </div>
+
             </div>
+
         </div>
+
     </div>
+
 </div>
 
 
@@ -234,224 +379,630 @@
     <script>
         $(document).ready(function() {
 
-            // Default halaman pertama
+            // =========================================================
+            // DEFAULT
+            // =========================================================
+
             aktifSuratMasuk();
+
             loadArsip();
 
-            // button surat masuk
+
+            // =========================================================
+            // SURAT MASUK
+            // =========================================================
+
             $('#btnMasuk').click(function() {
+
                 $('#jenis_surat').val('masuk');
+
                 aktifSuratMasuk();
+
                 loadArsip();
+
             });
 
-            // button surat keluar
+
+            // =========================================================
+            // SURAT KELUAR
+            // =========================================================
+
             $('#btnKeluar').click(function() {
+
                 $('#jenis_surat').val('keluar');
+
                 aktifSuratKeluar();
+
                 loadArsip();
+
             });
 
-            // button cari
+
+            // =========================================================
+            // CARI
+            // =========================================================
+
             $('#btnCari').click(function() {
+
                 loadArsip();
+
             });
 
-            // enter text box
-            $('#nomor_surat,#tanggal_surat,#perihal').keypress(function(e) {
+
+            // =========================================================
+            // ENTER
+            // =========================================================
+
+            $('#nomor_surat, #tanggal_surat, #perihal').keypress(function(e) {
+
                 if (e.which == 13) {
+
                     loadArsip();
+
                 }
+
             });
 
-            // instansi berubah
+
+            // =========================================================
+            // INSTANSI
+            // =========================================================
+
             $('#instansi_id').change(function() {
+
                 loadArsip();
+
             });
 
-            // reset
+
+            // =========================================================
+            // RESET
+            // =========================================================
+
             $('#btnReset').click(function() {
+
                 $('#nomor_surat').val('');
+
                 $('#tanggal_surat').val('');
+
                 $('#perihal').val('');
+
                 $('#instansi_id').val('');
+
                 loadArsip();
+
             });
+
         });
 
 
-        // load arsip
+        // =============================================================
+        // LOAD ARSIP
+        // =============================================================
+
         function loadArsip() {
+
             $('#dataArsip').html(`
+
         <div class="col-md-12">
+
             <div class="text-center py-5">
+
                 <div class="spinner-border text-primary"></div>
+
                 <br><br>
+
                 Memuat data...
+
             </div>
+
         </div>
+
     `);
 
+
             $.ajax({
+
                 url: "{{ route('get.ArsipDigital') }}",
+
                 type: "GET",
+
                 data: {
+
                     jenis_surat: $('#jenis_surat').val(),
+
                     nomor_surat: $('#nomor_surat').val(),
+
                     tgl_surat: $('#tanggal_surat').val(),
+
                     perihal: $('#perihal').val(),
+
                     instansi_id: $('#instansi_id').val()
+
                 },
 
+
                 success: function(response) {
+
                     let html = '';
-                    if (response.length == 0) {
+
+
+                    // =================================================
+                    // TIDAK ADA DATA
+                    // =================================================
+
+                    if (!response || response.length === 0) {
+
                         html = `
-                <div class="col-md-12">
-                    <div class="alert alert-warning text-center">
-                        <i class="fas fa-folder-open fa-3x mb-3"></i>
-                        <br>
-                        Data arsip tidak ditemukan.
+
+                    <div class="col-md-12">
+
+                        <div class="alert alert-warning text-center">
+
+                            <i class="fas fa-folder-open fa-3x mb-3"></i>
+
+                            <br>
+
+                            Data arsip tidak ditemukan.
+
+                        </div>
+
                     </div>
-                </div>
+
                 `;
-                    } else {
-                        $.each(response, function(i, item) {
-                            html += `
-<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 mb-4">
-    <div class="card arsip-card border-0 shadow-sm h-100">
-        <!-- Header -->
-        <div class="arsip-header
-            ${item.jenis_surat=='masuk' ? 'bg-primary' : 'bg-success'}">
-            <span>
-                <i class="fas ${item.jenis_surat=='masuk'
-                    ? 'fa-inbox'
-                    : 'fa-paper-plane'} me-1"></i>
 
-                ${item.jenis_surat.toUpperCase()}
-            </span>
-            <span class="badge bg-warning text-dark">
-                ${item.sifat_surat.nama_sifat}
-            </span>
-        </div>
-
-        <!-- Body -->
-        <div class="card-body">
-            <div class="text-center mb-3">
-                <a href="/storage/${item.file_surat}" target="_blank">
-                    <i class="fas fa-file-pdf pdf-icon"></i>
-                </a>
-            </div>
-            <div class="nomor-surat">
-                ${item.no_surat}
-            </div>
-            <div class="perihal">
-                ${item.perihal}
-            </div>
-
-            <hr>
-
-            <div class="info">
-                <div>
-                    <i class="fas fa-building text-primary"></i>
-                    ${item.instansi.nama_instansi}
-                </div>
-                <div>
-                    <i class="fas fa-calendar-alt text-success"></i>
-                    ${item.tgl_surat}
-                </div>
-            </div>
-        </div>
-
-        <!-- Footer -->
-       <div class="card-footer bg-light">
-    <div class="row g-2">
-
-        <div class="col-3">
-            <button
-                class="btn btn-warning btn-sm w-100 btn-detail"
-                data-id="${item.id}"
-                title="Detail Surat">
-
-                <i class="fas fa-info-circle"></i>
-
-            </button>
-        </div>
-
-        <div class="col-3">
-            <a href="/storage/${item.file_surat}"
-                target="_blank"
-                class="btn btn-primary btn-sm w-100"
-                title="Lihat PDF">
-
-                <i class="fas fa-eye"></i>
-
-            </a>
-        </div>
-
-        <div class="col-3">
-            <a href="/storage/${item.file_surat}"
-                download
-                class="btn btn-success btn-sm w-100"
-                title="Download">
-
-                <i class="fas fa-download"></i>
-
-            </a>
-        </div>
-
-        <div class="col-3">
-            <button
-                class="btn btn-danger btn-sm w-100 btn-print"
-                data-file="${item.file_surat}"
-                title="Cetak">
-
-                <i class="fas fa-print"></i>
-
-            </button>
-        </div>
-
-    </div>
-</div>
-    </div>
-</div>
-`;
-                        });
                     }
+
+
+                    // =================================================
+                    // ADA DATA
+                    // =================================================
+                    else {
+
+                        $.each(response, function(i, item) {
+
+
+                            let jenisSurat =
+                                item.jenis_surat == 'masuk' ?
+                                'SURAT MASUK' :
+                                'SURAT KELUAR';
+
+
+                            let warnaHeader =
+                                item.jenis_surat == 'masuk' ?
+                                'bg-primary' :
+                                'bg-success';
+
+
+                            let iconJenis =
+                                item.jenis_surat == 'masuk' ?
+                                'fa-inbox' :
+                                'fa-paper-plane';
+
+
+                            let sifat =
+                                item.sifat_surat ?
+                                item.sifat_surat.nama_sifat :
+                                '-';
+
+
+                            let instansi =
+                                item.instansi ?
+                                item.instansi.nama_instansi :
+                                '-';
+
+
+                            let noSurat =
+                                item.no_surat ?
+                                item.no_surat :
+                                '-';
+
+
+                            let perihal =
+                                item.perihal ?
+                                item.perihal :
+                                '-';
+
+
+                            let tanggal =
+                                item.tgl_surat ?
+                                item.tgl_surat :
+                                '-';
+
+
+                            // =================================================
+                            // FILE
+                            // =================================================
+
+                            let fileHtml = '';
+
+                            let tombolLihat = '';
+
+                            let tombolDownload = '';
+
+                            let tombolPrint = '';
+
+
+                            if (item.file_surat) {
+
+                                fileHtml = `
+
+                            <a
+                                href="/storage/${item.file_surat}"
+                                target="_blank">
+
+                                <i class="fas fa-file-pdf pdf-icon"></i>
+
+                            </a>
+
+                        `;
+
+
+                                tombolLihat = `
+
+                            <a
+                                href="/storage/${item.file_surat}"
+                                target="_blank"
+                                class="btn btn-primary btn-sm w-100"
+                                title="Lihat PDF">
+
+                                <i class="fas fa-eye"></i>
+
+                            </a>
+
+                        `;
+
+
+                                tombolDownload = `
+
+                            <a
+                                href="/storage/${item.file_surat}"
+                                download
+                                class="btn btn-success btn-sm w-100"
+                                title="Download">
+
+                                <i class="fas fa-download"></i>
+
+                            </a>
+
+                        `;
+
+
+                                tombolPrint = `
+
+                            <button
+                                type="button"
+                                class="btn btn-danger btn-sm w-100 btn-print"
+                                data-file="${item.file_surat}"
+                                title="Cetak">
+
+                                <i class="fas fa-print"></i>
+
+                            </button>
+
+                        `;
+
+                            } else {
+
+                                fileHtml = `
+
+                            <i class="fas fa-file-pdf pdf-icon text-secondary"></i>
+
+                            <div class="small text-muted mt-2">
+
+                                File tidak tersedia
+
+                            </div>
+
+                        `;
+
+
+                                tombolLihat = `
+
+                            <button
+                                type="button"
+                                class="btn btn-secondary btn-sm w-100"
+                                disabled>
+
+                                <i class="fas fa-eye-slash"></i>
+
+                            </button>
+
+                        `;
+
+
+                                tombolDownload = `
+
+                            <button
+                                type="button"
+                                class="btn btn-secondary btn-sm w-100"
+                                disabled>
+
+                                <i class="fas fa-download"></i>
+
+                            </button>
+
+                        `;
+
+
+                                tombolPrint = `
+
+                            <button
+                                type="button"
+                                class="btn btn-secondary btn-sm w-100"
+                                disabled>
+
+                                <i class="fas fa-print"></i>
+
+                            </button>
+
+                        `;
+
+                            }
+
+
+                            // =================================================
+                            // CARD
+                            // =================================================
+
+                            html += `
+
+                    <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 mb-4">
+
+                        <div class="card arsip-card border-0 shadow-sm h-100">
+
+
+                            <!-- HEADER -->
+
+                            <div class="arsip-header ${warnaHeader}">
+
+                                <span>
+
+                                    <i class="fas ${iconJenis} me-1"></i>
+
+                                    ${jenisSurat}
+
+                                </span>
+
+
+                                <span class="badge bg-warning text-dark">
+
+                                    ${sifat}
+
+                                </span>
+
+                            </div>
+
+
+                            <!-- BODY -->
+
+                            <div class="card-body">
+
+
+                                <div class="text-center mb-3">
+
+                                    ${fileHtml}
+
+                                </div>
+
+
+                                <div class="nomor-surat">
+
+                                    ${noSurat}
+
+                                </div>
+
+
+                                <div class="perihal">
+
+                                    ${perihal}
+
+                                </div>
+
+
+                                <hr>
+
+
+                                <div class="info">
+
+
+                                    <div>
+
+                                        <i class="fas fa-building text-primary"></i>
+
+                                        ${instansi}
+
+                                    </div>
+
+
+                                    <div>
+
+                                        <i class="fas fa-calendar-alt text-success"></i>
+
+                                        ${tanggal}
+
+                                    </div>
+
+
+                                    ${
+                                        item.jenis_surat == 'keluar'
+                                        ?
+                                        `
+
+                                                                    <div>
+
+                                                                        <i class="fas fa-users text-warning"></i>
+
+                                                                        ${
+                                                                            item.pegawai &&
+                                                                            item.pegawai.length > 0
+                                                                            ?
+                                                                            item.pegawai.length +
+                                                                            ' Pegawai Ditugaskan'
+                                                                            :
+                                                                            'Pegawai : -'
+                                                                        }
+
+                                                                    </div>
+
+                                                                    `
+                                        :
+                                        ''
+                                    }
+
+
+                                </div>
+
+
+                            </div>
+
+
+                            <!-- FOOTER -->
+
+                            <div class="card-footer bg-light">
+
+                                <div class="row g-2">
+
+
+                                    <!-- DETAIL -->
+
+                                    <div class="col-3">
+
+                                        <button
+                                            type="button"
+                                            class="btn btn-warning btn-sm w-100 btn-detail"
+                                            data-id="${item.id}"
+                                            data-jenis="${item.jenis_surat}"
+                                            title="Detail Surat">
+
+                                            <i class="fas fa-info-circle"></i>
+
+                                        </button>
+
+                                    </div>
+
+
+                                    <!-- LIHAT -->
+
+                                    <div class="col-3">
+
+                                        ${tombolLihat}
+
+                                    </div>
+
+
+                                    <!-- DOWNLOAD -->
+
+                                    <div class="col-3">
+
+                                        ${tombolDownload}
+
+                                    </div>
+
+
+                                    <!-- CETAK -->
+
+                                    <div class="col-3">
+
+                                        ${tombolPrint}
+
+                                    </div>
+
+
+                                </div>
+
+                            </div>
+
+
+                        </div>
+
+                    </div>
+
+                    `;
+
+                        });
+
+                    }
+
+
                     $('#dataArsip').html(html);
 
                 },
-                error: function() {
+
+
+                error: function(xhr) {
+
+                    console.log(xhr.responseText);
+
                     $('#dataArsip').html(`
+
                 <div class="col-md-12">
+
                     <div class="alert alert-danger text-center">
+
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+
                         Terjadi kesalahan saat mengambil data.
+
                     </div>
+
                 </div>
+
             `);
+
                 }
+
             });
+
         }
 
-        // button aktif
+
+        // =============================================================
+        // BUTTON AKTIF SURAT MASUK
+        // =============================================================
+
         function aktifSuratMasuk() {
+
             $('#btnMasuk')
+
                 .removeClass('btn-outline-primary')
+
                 .addClass('btn-primary');
+
+
             $('#btnKeluar')
+
                 .removeClass('btn-success')
+
                 .addClass('btn-outline-success');
+
         }
+
+
+        // =============================================================
+        // BUTTON AKTIF SURAT KELUAR
+        // =============================================================
 
         function aktifSuratKeluar() {
+
             $('#btnKeluar')
+
                 .removeClass('btn-outline-success')
+
                 .addClass('btn-success');
+
+
             $('#btnMasuk')
+
                 .removeClass('btn-primary')
+
                 .addClass('btn-outline-primary');
+
         }
     </script>
+
+
+
 
     <script>
         $(document).on('click', '.btn-print', function() {
@@ -460,12 +1011,66 @@
         });
     </script>
 
-
-    {{-- menampilkan detail surat --}}
     <script>
+        // =============================================================
+        // DETAIL ARSIP SURAT
+        // =============================================================
+
         $(document).on('click', '.btn-detail', function() {
 
             let id = $(this).data('id');
+            let jenis = $(this).data('jenis');
+
+            // =========================================================
+            // RESET MODAL
+            // =========================================================
+
+            $('#d_no_surat').text('-');
+            $('#d_jenis').text('-');
+            $('#d_tanggal').text('-');
+            $('#d_agenda').text('-');
+            $('#d_instansi').text('-');
+            $('#d_sifat').text('-');
+            $('#d_perihal').text('-');
+            $('#d_lampiran').text('-');
+            $('#d_keterangan').text('-');
+
+            $('#d_pegawai').html('-');
+            $('#d_jumlah_hari').text('-');
+            $('#d_tujuan').text('-');
+            $('#d_maksud_tujuan').text('-');
+            $('#d_mulai').text('-');
+            $('#d_selesai').text('-');
+
+            $('#detailSuratKeluar').hide();
+
+            $('#btnLihatPdf')
+                .hide()
+                .attr('href', '#');
+
+
+            // =========================================================
+            // LOADING
+            // =========================================================
+
+            $('#d_no_surat').html(
+                '<span class="text-muted">' +
+                '<i class="fas fa-spinner fa-spin me-1"></i>' +
+                'Memuat data...' +
+                '</span>'
+            );
+
+
+            // =========================================================
+            // TAMPILKAN MODAL
+            // =========================================================
+
+            $('#modalDetail').modal('show');
+
+
+            // =========================================================
+            // AJAX
+            // =========================================================
 
             $.ajax({
 
@@ -473,34 +1078,255 @@
 
                 type: "GET",
 
+                data: {
+                    jenis_surat: jenis
+                },
+
+
                 success: function(data) {
 
-                    $('#d_no_surat').text(data.no_surat);
+                    console.log('DETAIL SURAT:', data);
+
+
+                    // =================================================
+                    // DATA UMUM
+                    // =================================================
+
+                    $('#d_no_surat').text(
+                        data.no_surat ?? '-'
+                    );
+
 
                     $('#d_jenis').text(
-                        data.jenis_surat == 'masuk' ?
+                        data.jenis_surat === 'masuk' ?
                         'Surat Masuk' :
                         'Surat Keluar'
                     );
 
-                    $('#d_tanggal').text(data.tgl_surat);
 
-                    $('#d_agenda').text(data.no_agenda ?? '-');
+                    $('#d_tanggal').text(
+                        data.tgl_surat ?? '-'
+                    );
 
-                    $('#d_instansi').text(data.instansi.nama_instansi);
 
-                    $('#d_sifat').text(data.sifat_surat.nama_sifat);
+                    $('#d_agenda').text(
+                        data.no_agenda ?? '-'
+                    );
 
-                    $('#d_perihal').text(data.perihal);
 
-                    $('#d_lampiran').text(data.lampiran ?? '-');
+                    $('#d_perihal').text(
+                        data.perihal ?? '-'
+                    );
 
-                    $('#d_keterangan').text(data.keterangan ?? '-');
 
-                    $('#btnLihatPdf')
-                        .attr('href', '/storage/' + data.file_surat);
+                    $('#d_lampiran').text(
+                        data.lampiran ?? '-'
+                    );
 
-                    $('#modalDetail').modal('show');
+
+                    $('#d_keterangan').text(
+                        data.keterangan ?? '-'
+                    );
+
+
+                    // =================================================
+                    // SURAT MASUK
+                    // =================================================
+
+                    if (data.jenis_surat === 'masuk') {
+
+                        // Instansi
+                        if (data.instansi) {
+
+                            $('#d_instansi').text(
+                                data.instansi.nama_instansi ?? '-'
+                            );
+
+                        } else {
+
+                            $('#d_instansi').text('-');
+
+                        }
+
+
+                        // Sifat Surat
+                        if (data.sifat_surat) {
+
+                            $('#d_sifat').text(
+                                data.sifat_surat.nama_sifat ?? '-'
+                            );
+
+                        } else {
+
+                            $('#d_sifat').text('-');
+
+                        }
+
+
+                        // Pastikan detail surat keluar disembunyikan
+                        $('#detailSuratKeluar').hide();
+
+                    }
+
+
+                    // =================================================
+                    // SURAT KELUAR
+                    // =================================================
+                    else if (data.jenis_surat === 'keluar') {
+
+                        // ---------------------------------------------
+                        // Instansi dan sifat surat tidak digunakan
+                        // ---------------------------------------------
+
+                        $('#d_instansi').text('-');
+
+                        $('#d_sifat').text('-');
+
+
+                        // ---------------------------------------------
+                        // Tampilkan detail surat keluar
+                        // ---------------------------------------------
+
+                        $('#detailSuratKeluar').show();
+
+
+                        // ---------------------------------------------
+                        // Pegawai
+                        // ---------------------------------------------
+
+                        if (
+                            data.pegawai &&
+                            Array.isArray(data.pegawai) &&
+                            data.pegawai.length > 0
+                        ) {
+
+                            let htmlPegawai = '';
+
+
+                            $.each(data.pegawai, function(index, pegawai) {
+
+                                let namaPegawai =
+                                    pegawai.nama_pegawai ??
+                                    pegawai.nama ??
+                                    '-';
+
+
+                                htmlPegawai += `
+
+                                <div class="mb-2">
+
+                                    <span class="badge bg-light text-dark border">
+
+                                        <i class="fas fa-user me-1"></i>
+
+                                        ${namaPegawai}
+
+                                    </span>
+
+                                </div>
+
+                            `;
+
+                            });
+
+
+                            $('#d_pegawai').html(htmlPegawai);
+
+                        } else {
+
+                            $('#d_pegawai').html(
+                                '<span class="text-muted">Tidak ada pegawai ditugaskan</span>'
+                            );
+
+                        }
+
+
+                        // ---------------------------------------------
+                        // Jumlah Hari
+                        // ---------------------------------------------
+
+                        $('#d_jumlah_hari').text(
+                            data.jumlah_hari_tugas ?? '-'
+                        );
+
+
+                        // ---------------------------------------------
+                        // Tujuan
+                        // ---------------------------------------------
+
+                        $('#d_tujuan').text(
+                            data.tujuan_tugas ?? '-'
+                        );
+
+
+                        // ---------------------------------------------
+                        // Maksud / Tujuan
+                        // ---------------------------------------------
+
+                        $('#d_maksud_tujuan').text(
+                            data.maksud_tujuan_tugas ?? '-'
+                        );
+
+
+                        // ---------------------------------------------
+                        // Mulai
+                        // ---------------------------------------------
+
+                        $('#d_mulai').text(
+                            data.mulai_tugas ?? '-'
+                        );
+
+
+                        // ---------------------------------------------
+                        // Selesai
+                        // ---------------------------------------------
+
+                        $('#d_selesai').text(
+                            data.selesai_tugas ?? '-'
+                        );
+
+                    }
+
+
+                    // =================================================
+                    // FILE SURAT
+                    // =================================================
+
+                    if (data.file_surat) {
+
+                        $('#btnLihatPdf')
+                            .attr(
+                                'href',
+                                '/storage/' + data.file_surat
+                            )
+                            .show();
+
+                    } else {
+
+                        $('#btnLihatPdf')
+                            .hide()
+                            .attr('href', '#');
+                    }
+                },
+
+                // =====================================================
+                // ERROR
+                // =====================================================
+
+                error: function(xhr) {
+
+                    console.log(
+                        'ERROR DETAIL:',
+                        xhr.responseText
+                    );
+
+
+                    $('#modalDetail').modal('hide');
+
+
+                    alert(
+                        'Data detail surat tidak dapat dimuat.'
+                    );
 
                 }
 

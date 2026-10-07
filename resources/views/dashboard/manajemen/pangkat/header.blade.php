@@ -1,6 +1,6 @@
 <div class="page-header d-flex justify-content-between align-items-center">
     <div>
-        <h3 class="fw-bold mb-1">Semua Surat</h3>
+        <h3 class="fw-bold mb-1">Data Pangkat</h3>
 
     </div>
 
@@ -14,7 +14,7 @@
             <i class="icon-arrow-right"></i>
         </li>
         <li class="nav-item">
-            <a href="#">Semua Surat</a>
+            <a href="#">Data Pangkat</a>
         </li>
     </ul>
 </div>

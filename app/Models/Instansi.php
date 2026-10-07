@@ -19,7 +19,7 @@ class Instansi extends Model
         'telepon',
         'email',
         'status',
-        'created_by'
+        'created_by',
     ];
 
     public function surat()

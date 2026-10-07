@@ -1,82 +1,232 @@
 <!doctype html>
-<html lang="en">
+<html lang="id">
 
 <head>
-    <!-- Required meta tags -->
     <meta charset="utf-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400&display=swap" rel="stylesheet">
-    <title>Login</title>
+
+    <meta name="theme-color" content="#4285e8">
+
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet">
+
+    <title>Login | SIPAT</title>
 
     @include('login.loginheader')
 </head>
 
 <body>
-    <div class="d-lg-flex half">
-        <div class="bg order-1 order-md-2"
-            style="background-image: url('{{ asset('templatelogin/images/gbr_login.png') }}');"></div>
-        <div class="contents order-2 order-md-1">
 
-            <div class="container">
-                <div class="row align-items-center justify-content-center">
-                    <div class="col-md-7">
-                        @if ($errors->any())
-                            <div class="text-danger text-center mb-2" style="font-size: 0.875rem;">
-                                {{ $errors->first() }}
+    <div class="login-page">
+
+        {{-- Background Decoration --}}
+        <div class="background-decoration decoration-one"></div>
+        <div class="background-decoration decoration-two"></div>
+        <div class="background-decoration decoration-three"></div>
+
+        <div class="background-dot dot-one"></div>
+        <div class="background-dot dot-two"></div>
+
+
+        {{-- Login Card --}}
+        <div class="login-card">
+
+            {{-- =====================================================
+                 LEFT : LOGIN FORM
+            ====================================================== --}}
+            <div class="login-form-panel">
+
+                <div class="login-form-content">
+
+
+                    {{-- =================================================
+                         BRAND SIPAT
+                    ================================================== --}}
+                    {{-- <div class="brand">
+
+                        <div class="brand-logo">
+                            <span>S</span>
+                        </div>
+
+                        <div class="brand-info">
+
+                            <div class="brand-name">
+                                SIPAT
                             </div>
-                        @endif
 
-                        <h3 class="text-center mb-2">
-                            Selamat Datang di <strong>SIPAT</strong>
-                        </h3>
+                            <div class="brand-description">
+                                Sistem Informasi Pencatatan Surat
+                            </div>
 
-                        <p class="text-center text-muted mb-4">
-                            Sistem Informasi Pencatatan Surat
+                        </div>
+
+                    </div> --}}
+
+
+                    {{-- =================================================
+                         WELCOME
+                    ================================================== --}}
+                    <div class="welcome-section">
+
+                        <h1>
+                            Selamat Datang
+                        </h1>
+
+                        <p>
+                            Silakan masuk untuk melanjutkan ke aplikasi
                         </p>
 
-                        <form action="{{ route('authenticate') }}" method="POST">
-                            @csrf
-                            <div class="form-group first">
-                                <label for="username">Username</label>
+                    </div>
+
+
+                    {{-- =================================================
+                         GENERAL ERROR
+                    ================================================== --}}
+                    @if ($errors->any())
+                        <div class="login-error">
+                            {{ $errors->first() }}
+                        </div>
+                    @endif
+
+
+                    {{-- =================================================
+                         LOGIN FORM
+                    ================================================== --}}
+                    <form action="{{ route('authenticate') }}" method="POST">
+
+                        @csrf
+
+
+                        {{-- =================================================
+                             EMAIL / USERNAME
+                        ================================================== --}}
+                        <div class="form-group">
+
+                            <label for="email">
+                                Username
+                            </label>
+
+                            <div class="input-box">
+
+                                <span class="input-icon">
+                                    @
+                                </span>
+
                                 <input type="email" class="form-control" name="email" id="email"
                                     placeholder="example@gmail.com" value="{{ old('email') }}" autocomplete="email"
                                     required>
 
-                                @error('email')
-                                    <div class="text-danger mt-1">
-                                        {{ $message }}
-                                    </div>
-                                @enderror
-
                             </div>
-                            <div class="form-group last mb-3">
-                                <label for="password">Password</label>
+
+                            @error('email')
+                                <div class="validation-error">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+
+                        </div>
+
+
+                        {{-- =================================================
+                             PASSWORD
+                        ================================================== --}}
+                        <div class="form-group">
+
+                            <label for="password">
+                                Password
+                            </label>
+
+                            <div class="input-box">
+
+                                <span class="input-icon password-icon">
+                                    •
+                                </span>
+
                                 <input type="password" class="form-control" name="password" id="password"
                                     placeholder="Masukkan Password" autocomplete="current-password" required>
 
-                                @error('password')
-                                    <div class="text-danger mt-1">
-                                        {{ $message }}
-                                    </div>
-                                @enderror
                             </div>
 
-                            <div class="d-flex mb-5 align-items-center">
-                                <label class="control control--checkbox mb-0"><span class="caption">Ingatkan saya</span>
-                                    <input type="checkbox" id="ckb1" name="remember" />
-                                    <div class="control__indicator"></div>
-                                </label>
-                                <span class="ml-auto"><a href="#" class="forgot-pass">Lupa Password</a></span>
-                            </div>
+                            @error('password')
+                                <div class="validation-error">
+                                    {{ $message }}
+                                </div>
+                            @enderror
 
-                            <input type="submit" value="Login" class="btn btn-block btn-primary">
+                        </div>
 
-                        </form>
+
+                        {{-- =================================================
+                             REMEMBER + FORGOT PASSWORD
+                        ================================================== --}}
+                        <div class="login-options">
+
+                            <label class="remember-control">
+
+                                <input type="checkbox" id="ckb1" name="remember">
+
+                                <span class="custom-checkbox"></span>
+
+                                <span class="remember-text">
+                                    Ingatkan saya
+                                </span>
+
+                            </label>
+
+
+                            <a href="#" class="forgot-password">
+
+                                Lupa Password?
+
+                            </a>
+
+                        </div>
+
+
+                        {{-- =================================================
+                             LOGIN BUTTON
+                        ================================================== --}}
+                        <button type="submit" class="login-button">
+
+                            Login
+
+                        </button>
+
+                    </form>
+
+
+                    {{-- =================================================
+                         FOOTER
+                    ================================================== --}}
+                    <div class="form-footer">
+
+                        SIPAT © {{ date('Y') }}
+
+                        <span>
+                            Sistem Informasi Pencatatan Surat Menyurat
+                        </span>
+
                     </div>
+
                 </div>
+
             </div>
+
+
+            {{-- =====================================================
+                 RIGHT : IMAGE
+            ====================================================== --}}
+            <div class="login-image-panel">
+
+                <img src="{{ asset('templatelogin/images/gbr_login.png') }}"
+                    alt="SIPAT - Sistem Informasi Pencatatan Surat Menyurat">
+
+            </div>
+
         </div>
+
     </div>
+
 
     @include('login.loginfooter')
 
